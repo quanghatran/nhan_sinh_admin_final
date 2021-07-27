@@ -20,6 +20,8 @@ const StaticSearchChart = () => {
 	const [startDay, setStartDay] = useState(initialStartDay);
 	const [endDay, setEndDay] = useState(initialEndDay);
 
+	
+
 	const data = {
 		labels: labelsDayRange,
 		datasets: [
@@ -95,7 +97,7 @@ const StaticSearchChart = () => {
 				<CardBody className='pt-0'>
 					<Row className='border-bottom py-2 bg-light'>
 						<Col sm='6' className='d-flex mb-2 mb-sm-0'>
-							<RangeDatePicker />
+							<RangeDatePicker setStartDay={setStartDay} setEndDay={setEndDay}/>
 						</Col>
 					</Row>
 					<Line data={data} options={options} />

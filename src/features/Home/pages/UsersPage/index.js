@@ -37,7 +37,7 @@ const Users = () => {
 		useState("");
 	const [clickedOpenListServiceBought, setClickedOpenListServiceBought] =
 		useState("");
-	const [newMoney, setNewMoney] = useState("");
+	const [newMoney, setNewMoney] = useState(0);
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState(false);
 
@@ -74,12 +74,13 @@ const Users = () => {
 	}, []);
 
 	// handle change money of users
-	const handleSubmit = (idUser) => {
+	const handleSubmit = (e, idUser) => {
 		console.log(idUser);
 		if (idUser && newMoney) {
 			const dataNewMoney = {
 				newMoney: newMoney,
 			};
+			console.log(dataNewMoney);
 
 			const fetchChangeMoney = () => {
 				customerApi
@@ -101,7 +102,7 @@ const Users = () => {
 					});
 			};
 
-			fetchChangeMoney();
+			 fetchChangeMoney();
 		}
 	};
 
@@ -208,8 +209,8 @@ const Users = () => {
 											idUserChange={data._id}
 											isOpenForm={openChangeMoneyForm}
 											onCloseForm={handleChangeMoneyClose}
-											onChangeMoneyFormSubmit={handleSubmit}
-											onFormChange={(e) => setNewMoney(e.target.value)}
+											onChangeMoneyFormSubmit={(e)=>handleSubmit(e,data._id )}
+											onFormChange={(e) => setNewMoney(parseInt(e.target.value))}
 											onSuccess={success}
 											onError={error}
 										/>
