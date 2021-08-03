@@ -66,7 +66,7 @@ const AddingCoachingService = (props) => {
 					<div className={classes.paper}>
 						<Container size='sm'>
 							<Typography variant='h5' style={{ marginBottom: "1rem" }}>
-								Thêm mới người đặt lịch dịch vụ coaching
+								Thêm lịch đặt coaching
 							</Typography>
 
 							<form autoComplete='off' onSubmit={handleSubmit}>
@@ -142,7 +142,7 @@ const AddingCoachingService = (props) => {
 									severity='success'
 									style={{ marginTop: "1rem", justifyContent: "center" }}
 								>
-									Đặt lịch cho khách hàng thành công
+									Đặt lịch coaching thành công
 								</Alert>
 							)}
 
@@ -152,7 +152,7 @@ const AddingCoachingService = (props) => {
 									severity='error'
 									style={{ marginTop: "1rem", justifyContent: "center" }}
 								>
-									Đặt lịch cho khách hàng không thành công
+									Đặt lịch coaching không thành công
 								</Alert>
 							)}
 						</Container>

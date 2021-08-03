@@ -22,22 +22,22 @@ function PaperComponent(props) {
 
 export default function ConfirmDeleteService(props) {
 	const {
-		isConfirmDeleteServiceOpen,
-		onConfirmDeleteServiceClose,
+		isOpenDeleteConfirm,
+		onConfirmDeleteClose,
 		onClickConfirmDeleteService,
 		onSuccess,
 		onError,
+		id,
 	} = props;
 
-	const handleClick = () => {
-		console.log("clicked");
-		onClickConfirmDeleteService();
+	const handleClick = (id) => {
+		onClickConfirmDeleteService(id);
 	};
 
 	return (
 		<Dialog
-			isOpen={isConfirmDeleteServiceOpen}
-			onClose={onConfirmDeleteServiceClose}
+			open={isOpenDeleteConfirm}
+			onClose={onConfirmDeleteClose}
 			PaperComponent={PaperComponent}
 			aria-labelledby='draggable-dialog-title'
 		>
@@ -45,16 +45,14 @@ export default function ConfirmDeleteService(props) {
 				Xác nhận
 			</DialogTitle>
 			<DialogContent>
-				<DialogContentText>
-					Bạn có chắc chắc thêm dịch vụ này cho người dùng
-				</DialogContentText>
+				<DialogContentText>Bạn có chắc chắc xóa dịch vụ này</DialogContentText>
 				{onSuccess && (
 					<Alert
 						variant='filled'
 						severity='success'
 						style={{ marginTop: "1rem", justifyContent: "center" }}
 					>
-						Thêm dịch vụ thành công
+						Xóa dịch vụ thành công
 					</Alert>
 				)}
 				{onError && (
@@ -63,21 +61,23 @@ export default function ConfirmDeleteService(props) {
 						severity='error'
 						style={{ marginTop: "1rem", justifyContent: "center" }}
 					>
-						Thêm dịch vụ không thành công
+						Xóa dịch vụ không thành công
 					</Alert>
 				)}
 			</DialogContent>
 			<DialogActions>
 				<Button
 					autoFocus
-					onClick={onConfirmDeleteServiceClose}
+					onClick={onConfirmDeleteClose}
 					color='secondary'
 					variant='contained'
 				>
 					Hủy
 				</Button>
 				<Button
-					onClick={handleClick}
+					onClick={(e) => {
+						handleClick(id);
+					}}
 					color='primary'
 					variant='contained'
 					type='button'

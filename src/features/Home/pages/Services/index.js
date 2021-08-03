@@ -150,8 +150,8 @@ const Services = () => {
 
 	const handleOpenDeleteConfirm = (id) => {
 		console.log(id);
-		setOpenDeleteConfirm(true);
 		setClickedDeleteId(id);
+		setOpenDeleteConfirm(true);
 	};
 
 	const handleCloseDeleteConfirm = (id) => {
@@ -160,19 +160,27 @@ const Services = () => {
 
 	// handle click confirm delete service
 	const handleClickDeleteConfirm = (id) => {
-		console.log("deleted: ", id);
 		servicesApi
 			.deleteService(id)
 			.then(function (response) {
 				setSuccess(true);
+
+				setTimeout(() => {
+					setIsDataChanged(true);
+					setOpenDeleteConfirm(false);
+					setSuccess(false);
+				}, 1500);
 			})
 			.catch(function (error) {
 				setError(true);
+				setTimeout(() => {
+					setOpenDeleteConfirm(false);
+					setIsDataChanged(true);
+
+					setError(false);
+				}, 1500);
 			});
-		setTimeout(() => {
-			setOpenDeleteConfirm(false);
-			setIsDataChanged(true);
-		}, 1500);
+
 		setIsDataChanged(false);
 	};
 
@@ -200,7 +208,7 @@ const Services = () => {
 
 			{/* adding service component */}
 			<AddingServiceForm
-				isOpen={openAddingServiceForm}
+				isAddingServiceOpen={openAddingServiceForm}
 				onCloseForm={handleCloseAddingServiceForm}
 				onNameServiceChange={(e) => setNameService(e.target.value)}
 				onPriceServiceChange={(e) => setPriceService(e.target.value)}
@@ -239,15 +247,14 @@ const Services = () => {
 									</Button>
 									{clickedDeleteId === data._id ? (
 										<ConfirmDeleteService
-											isOpen={openDeleteConfirm}
-											onClose={handleCloseDeleteConfirm}
-											onClickConfirm={(e) => {
+											isOpenDeleteConfirm={openDeleteConfirm}
+											onConfirmDeleteClose={handleCloseDeleteConfirm}
+											onClickConfirmDeleteService={(e) => {
 												handleClickDeleteConfirm(data._id);
 											}}
-											id={data._id}
 											onSuccess={success}
 											onError={error}
-											title={data.title}
+											id={data._id}
 										/>
 									) : (
 										""
