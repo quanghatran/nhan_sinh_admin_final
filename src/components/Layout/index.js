@@ -1,4 +1,10 @@
-import { IconButton, makeStyles, Tooltip } from "@material-ui/core";
+import {
+	CssBaseline,
+	Divider,
+	Hidden,
+	IconButton,
+	Tooltip,
+} from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Avatar from "@material-ui/core/Avatar";
 import { deepPurple } from "@material-ui/core/colors";
@@ -13,26 +19,42 @@ import { ExitToApp, SubjectOutlined } from "@material-ui/icons";
 import DnsOutlinedIcon from "@material-ui/icons/DnsOutlined";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import PeopleOutlinedIcon from "@material-ui/icons/PeopleOutlined";
-import { format } from "date-fns";
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import logoSatsi from "../../assets/images/logo_satsi.png";
 import logoSatsi1 from "../../assets/images/logo_footer.png";
+import DirectionsBikeOutlinedIcon from "@material-ui/icons/DirectionsBikeOutlined";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import MenuIcon from "@material-ui/icons/Menu";
+import moment from "moment";
+
 import "./Layout.css";
-const drawerWidth = 270;
+const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => {
 	return {
-		page: {
-			background: "#f9f9f9",
-			width: "100%",
-			padding: theme.spacing(3),
-		},
 		root: {
 			display: "flex",
 		},
 		drawer: {
-			width: drawerWidth,
+			[theme.breakpoints.up("sm")]: {
+				width: drawerWidth,
+				flexShrink: 0,
+			},
+		},
+
+		appBar: {
+			[theme.breakpoints.up("sm")]: {
+				width: `calc(100% - ${drawerWidth}px)`,
+				marginLeft: drawerWidth,
+			},
+		},
+
+		menuButton: {
+			marginRight: theme.spacing(2),
+			[theme.breakpoints.up("sm")]: {
+				display: "none",
+			},
 		},
 		drawerPaper: {
 			width: drawerWidth,
@@ -44,8 +66,10 @@ const useStyles = makeStyles((theme) => {
 			padding: theme.spacing(2),
 		},
 		appBar: {
-			width: `calc(100% - ${drawerWidth}px)`,
-			marginLeft: drawerWidth,
+			[theme.breakpoints.up("sm")]: {
+				width: `calc(100% - ${drawerWidth}px)`,
+				marginLeft: drawerWidth,
+			},
 		},
 		date: {
 			flexGrow: 1,
@@ -57,6 +81,10 @@ const useStyles = makeStyles((theme) => {
 			height: theme.spacing(8),
 			margin: "0 auto",
 		},
+		content: {
+			flexGrow: 1,
+			padding: theme.spacing(3),
+		},
 	};
 });
 
@@ -64,6 +92,14 @@ export default function Layout({ children }) {
 	const classes = useStyles();
 	const history = useHistory();
 	const location = useLocation();
+	const theme = useTheme();
+
+	// const { window } = props;
+	const [mobileOpen, setMobileOpen] = React.useState(false);
+
+	const handleDrawerToggle = () => {
+		setMobileOpen(!mobileOpen);
+	};
 
 	const menuItems = [
 		{
@@ -72,17 +108,22 @@ export default function Layout({ children }) {
 			path: "/",
 		},
 		{
-			text: "DS Người Dùng",
+			text: "Users",
 			icon: <PeopleOutlinedIcon color='primary' />,
 			path: "/users",
 		},
 		{
-			text: "DS Tra Cứu Miễn Phí",
+			text: "Voucher Free",
 			icon: <SubjectOutlined color='primary' />,
 			path: "/list-search-free",
 		},
 		{
-			text: "Dịch Vụ",
+			text: "Coaching",
+			icon: <DirectionsBikeOutlinedIcon color='primary' />,
+			path: "/direct-meeting",
+		},
+		{
+			text: "Services",
 			icon: <DnsOutlinedIcon color='primary' />,
 			path: "/services",
 		},
@@ -92,21 +133,64 @@ export default function Layout({ children }) {
 		history.push("/sign-in");
 	};
 
+	const handleClickNavigate = (path) => {
+		setMobileOpen(false);
+		history.push(path);
+	};
+
+	/* side drawer */
+	const drawer = (
+		<div>
+			<div className={classes.toolbar} />
+			<div>
+				<div style={{ textAlign: "center" }}>
+					<img alt='admin' src={logoSatsi} style={{ width: "140px" }} />
+				</div>
+				<Typography variant='h6' className={classes.title}>
+					Minh Triết Nhân Sinh
+				</Typography>
+			</div>
+
+			<Divider />
+			{/* links/list section */}
+			<List>
+				{menuItems.map((item) => (
+					<ListItem
+						button
+						key={item.text}
+						onClick={(e) => {
+							handleClickNavigate(item.path);
+						}}
+						className={location.pathname == item.path ? classes.active : null}
+					>
+						<ListItemIcon>{item.icon}</ListItemIcon>
+						<ListItemText primary={item.text} />
+					</ListItem>
+				))}
+			</List>
+		</div>
+	);
+
 	return (
 		<div className={classes.root}>
+			<CssBaseline />
 			{/* app bar */}
-			<AppBar
-				position='fixed'
-				className={classes.appBar}
-				elevation={0}
-				color='primary'
-			>
+			<AppBar position='fixed' className={classes.appBar} color='primary'>
 				<Toolbar>
+					<IconButton
+						color='inherit'
+						aria-label='open drawer'
+						edge='start'
+						onClick={handleDrawerToggle}
+						className={classes.menuButton}
+					>
+						<MenuIcon />
+					</IconButton>
 					<Typography className={classes.date}>
-						Today is the {format(new Date(), "do MMMM Y")}
+						{moment(new Date()).format("DD/MM/YYYY")}
 					</Typography>
-					<Typography>Admin</Typography>
-					<Avatar alt='admin' src={logoSatsi1} />
+					{/* <Typography>Admin</Typography> */}
+					{/* <Avatar alt='admin' src={logoSatsi1} /> */}
 					<Tooltip title='Đăng Xuất'>
 						<IconButton
 							variant='contained'
@@ -125,41 +209,39 @@ export default function Layout({ children }) {
 				</Toolbar>
 			</AppBar>
 
-			{/* side drawer */}
-			<Drawer
-				className={classes.drawer}
-				variant='permanent'
-				classes={{ paper: classes.drawerPaper }}
-				anchor='left'
-			>
-				<div>
-					<div style={{ textAlign: "center" }}>
-						<img alt='admin' src={logoSatsi} />
-					</div>
-
-					<Typography variant='h5' className={classes.title}>
-						Minh Triết Nhân Sinh
-					</Typography>
-				</div>
-
-				{/* links/list section */}
-				<List>
-					{menuItems.map((item) => (
-						<ListItem
-							button
-							key={item.text}
-							onClick={() => history.push(item.path)}
-							className={location.pathname == item.path ? classes.active : null}
-						>
-							<ListItemIcon>{item.icon}</ListItemIcon>
-							<ListItemText primary={item.text} />
-						</ListItem>
-					))}
-				</List>
-			</Drawer>
+			<nav className={classes.drawer} aria-label='mailbox folders'>
+				<Hidden smUp implementation='css'>
+					<Drawer
+						// container={container}
+						variant='temporary'
+						anchor={theme.direction === "rtl" ? "right" : "left"}
+						open={mobileOpen}
+						onClose={handleDrawerToggle}
+						classes={{
+							paper: classes.drawerPaper,
+						}}
+						ModalProps={{
+							keepMounted: true, // Better open performance on mobile.
+						}}
+					>
+						{drawer}
+					</Drawer>
+				</Hidden>
+				<Hidden xsDown implementation='css'>
+					<Drawer
+						classes={{
+							paper: classes.drawerPaper,
+						}}
+						variant='permanent'
+						open
+					>
+						{drawer}
+					</Drawer>
+				</Hidden>
+			</nav>
 
 			{/* main content */}
-			<div className={classes.page}>
+			<div className={classes.content}>
 				<div className={classes.toolbar}></div>
 				{children}
 			</div>

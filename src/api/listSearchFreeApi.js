@@ -1,12 +1,15 @@
 import axiosAdmin from "./axiosAdmin";
 
 const listSearchFreeApi = {
-	// post phone and password, received a token, save in local storage
-	// const header
 	getListSearchFree: (params) => {
 		const url = "/api/searchFree";
 
 		return axiosAdmin.get(url, params);
+	},
+	patchNoteListSearchFree: (id, params) => {
+		const url = `api/searchFree/${id}`;
+
+		return axiosAdmin.patch(url, params);
 	},
 };
 

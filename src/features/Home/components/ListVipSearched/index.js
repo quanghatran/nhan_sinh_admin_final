@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const ListServiceBought = (props) => {
+const ListVipSearched = (props) => {
 	const classes = useStyles();
 	const { nameUser, isOpenForm, onCloseForm, listServiceUserBought } = props;
 
@@ -138,4 +138,4 @@ const ListServiceBought = (props) => {
 	);
 };
 
-export default ListServiceBought;
+export default ListVipSearched;

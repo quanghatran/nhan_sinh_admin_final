@@ -24,22 +24,24 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const DepositUserForm = (props) => {
+const NoteSearchFree = (props) => {
 	const classes = useStyles();
 	const {
 		nameUserChange,
 		idUserChange,
 		isOpenForm,
 		onCloseForm,
-		onChangeMoneyFormSubmit,
+		onChangeNoteSubmit,
 		onFormChange,
 		onSuccess,
 		onError,
+		currentNote,
 	} = props;
 
 	const handleFormSubmit = (e) => {
 		e.preventDefault();
-		onChangeMoneyFormSubmit(idUserChange);
+		onChangeNoteSubmit(idUserChange);
+		// console.log(object);
 	};
 
 	return (
@@ -59,7 +61,7 @@ const DepositUserForm = (props) => {
 				<div className={classes.paper}>
 					<Container size='sm'>
 						<Typography variant='h5' style={{ marginBottom: "1rem" }}>
-							Nạp tiền cho người dùng:
+							Note - khách hàng:
 							<span
 								style={{
 									fontWeight: "bold",
@@ -74,19 +76,22 @@ const DepositUserForm = (props) => {
 						<form noValidate autoComplete='off' onSubmit={handleFormSubmit}>
 							<TextField
 								className={classes.field}
-								label='Số tiền nạp thêm'
-								variant='outlined'
+								id='outlined-multiline-static'
+								label='Note'
+								multiline
 								color='secondary'
 								fullWidth
-								type='number'
-								style={{ marginBottom: "1rem" }}
+								rows={5}
+								defaultValue={currentNote}
 								onChange={onFormChange}
+								variant='outlined'
+								style={{ marginBottom: "1rem" }}
+								type='text'
 							/>
 							<Button
 								color='secondary'
 								variant='contained'
 								onClick={onCloseForm}
-								float
 							>
 								Hủy
 							</Button>
@@ -105,7 +110,7 @@ const DepositUserForm = (props) => {
 								severity='success'
 								style={{ marginTop: "1rem", justifyContent: "center" }}
 							>
-								Thay đổi tiền người dùng thành công
+								Thay đổi note thành công
 							</Alert>
 						)}
 						{onError && (
@@ -114,7 +119,7 @@ const DepositUserForm = (props) => {
 								severity='error'
 								style={{ marginTop: "1rem", justifyContent: "center" }}
 							>
-								Thay đổi tiền người dùng thất bại
+								Thay đổi note không thành công
 							</Alert>
 						)}
 					</Container>
@@ -124,4 +129,4 @@ const DepositUserForm = (props) => {
 	);
 };
 
-export default DepositUserForm;
+export default NoteSearchFree;

@@ -3,15 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import statisticApi from "../../../../api/statisticApi";
 import { Row, Col, Card, CardHeader, CardBody, Button } from "shards-react";
-import RangeDatePicker from "../../../../components/common/RangeDatePicker";
+import moment from "moment";
 
 const date = new Date();
 
-const initialEndDay = date.toISOString().slice(0, 10);
+const initialEndDay = moment(date).format("YYYY-MM-DD");
 
-const month = date.getMonth();
-const initStartMonth = month.toString().length == 1 ? `0${month}` : month;
-const initialStartDay = `${date.getFullYear()}-${initStartMonth}-${date.getDate()}`;
+const initialStartDay = moment().subtract(1, "months").format("YYYY-MM-DD");
 
 const StatisticDeposit = () => {
 	const [labelsDayRange, setLabelsDayRange] = useState([]);
@@ -78,14 +76,14 @@ const StatisticDeposit = () => {
 					<h6 className='m-0'>Thống kê tổng số tiền nhận trong ngày</h6>
 				</CardHeader>
 				<CardBody className='pt-0'>
-					<Row className='border-bottom py-2 bg-light'>
+					{/* <Row className='border-bottom py-2 bg-light'>
 						<Col sm='6' className='d-flex mb-2 mb-sm-0'>
 							<RangeDatePicker
 								startDay={(e) => setStartDay(e.target.value)}
 								endDay={(e) => setEndDay(e.target.value)}
 							/>
 						</Col>
-					</Row>
+					</Row> */}
 					<Bar data={data} options={options} />
 				</CardBody>
 			</Card>

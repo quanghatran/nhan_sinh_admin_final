@@ -13,6 +13,10 @@ const statisticApi = {
 		const url = "/api/admin/get-money-data-by-day";
 		return axiosAdmin.post(url, params);
 	},
+	postDirectionalStatistic: (params) => {
+		const url = "/api/admin/get-gap-truc-tiep-data-by-day";
+		return axiosAdmin.post(url, params);
+	},
 };
 
 export default statisticApi;

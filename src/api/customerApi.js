@@ -9,9 +9,17 @@ const customerApi = {
 		const url = `/api/users/${subApi}`;
 		return axiosAdmin.patch(url, params);
 	},
-	getListServerUserBought: (subApi, params) => {
+	getListServiceUserBought: (subApi, params) => {
 		const url = `/api/user-service/${subApi}`;
 		return axiosAdmin.get(url, params);
+	},
+	deleteUser: (id, params) => {
+		const url = `/api/users/${id}`;
+		return axiosAdmin.delete(url, params);
+	},
+	postAddingSlotVip: (params) => {
+		const url = `/api/admin/buy-service-for-user`;
+		return axiosAdmin.post(url, params);
 	},
 };
 

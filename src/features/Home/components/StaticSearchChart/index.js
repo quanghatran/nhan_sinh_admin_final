@@ -1,22 +1,22 @@
-import { Line } from "react-chartjs-2";
 import { Typography } from "@material-ui/core";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Row, Col, Card, CardHeader, CardBody, Button } from "shards-react";
-import RangeDatePicker from "../../../../components/common/RangeDatePicker";
+import { Line } from "react-chartjs-2";
+import { Card, CardBody, CardHeader } from "shards-react";
 import statisticApi from "../../../../api/statisticApi";
 
 const date = new Date();
 
-const initialEndDay = date.toISOString().slice(0, 10);
+const initialEndDay = moment(date).format("YYYY-MM-DD");
 
-const month = date.getMonth();
-const initStartMonth = month.toString().length == 1 ? `0${month}` : month;
-const initialStartDay = `${date.getFullYear()}-${initStartMonth}-${date.getDate()}`;
+const initialStartDay = moment().subtract(1, "months").format("YYYY-MM-DD");
 
 const StaticSearchChart = () => {
 	const [labelsDayRange, setLabelsDayRange] = useState([]);
 	const [countFreeSearch, setCountFreeSearch] = useState([]);
 	const [countVipSearch, setCountVipSearch] = useState([]);
+	const [amountDirection, setAmountDirection] = useState([]);
+
 	const [startDay, setStartDay] = useState(initialStartDay);
 	const [endDay, setEndDay] = useState(initialEndDay);
 
@@ -26,13 +26,19 @@ const StaticSearchChart = () => {
 			{
 				data: countFreeSearch,
 				label: "Tra cứu miễn phí",
-				borderColor: "#3e95cd",
+				borderColor: "#2c3e50",
 				fill: false,
 			},
 			{
 				data: countVipSearch,
-				label: "Tra cứu có phí",
-				borderColor: "#8e5ea2",
+				label: "Tra cứu VIP",
+				borderColor: "#16a085",
+				fill: false,
+			},
+			{
+				data: amountDirection,
+				label: "Gặp trực tiếp",
+				borderColor: "#c0392b",
 				fill: false,
 			},
 		],
@@ -54,7 +60,6 @@ const StaticSearchChart = () => {
 				.then((response) => {
 					setLabelsDayRange(response.data.dayRange);
 					setCountFreeSearch(response.data.count);
-					// this.setState({ resData: response.data });
 				})
 				.catch((error) => {
 					console.log(error);
@@ -74,8 +79,24 @@ const StaticSearchChart = () => {
 					console.log(error);
 				});
 		};
+
+		const fetchStatisticDirect = () => {
+			statisticApi
+				.postDirectionalStatistic({
+					start: startDay,
+					end: endDay,
+				})
+				.then((response) => {
+					setAmountDirection(response.data.count);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		};
+
 		fetchStatisticSearchFree();
 		fetchStatisticSearchVip();
+		fetchStatisticDirect();
 	}, []);
 
 	return (
@@ -93,11 +114,17 @@ const StaticSearchChart = () => {
 					<h6 className='m-0'>Thống kê số lượt tra cứu theo từng ngày</h6>
 				</CardHeader>
 				<CardBody className='pt-0'>
-					<Row className='border-bottom py-2 bg-light'>
+					{/* <Row className='border-bottom py-2 bg-light'>
 						<Col sm='6' className='d-flex mb-2 mb-sm-0'>
-							<RangeDatePicker />
+							<RangeDatePicker
+								startDay={startDay}
+								endDay={endDay}
+								setStartDay={setStartDay}
+								setEndDay={setEndDay}
+								// onFilter
+							/>
 						</Col>
-					</Row>
+					</Row> */}
 					<Line data={data} options={options} />
 				</CardBody>
 			</Card>

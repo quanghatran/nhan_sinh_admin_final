@@ -7,8 +7,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import React, { useEffect, useState } from "react";
 import servicesApi from "../../../../api/servicesApi";
-import ConfirmDialog from "../../../../components/ConfirmDialog";
 import AddingServiceForm from "../../components/AddingServiceForm";
+import ConfirmDeleteService from "../../components/ConfirmDeleteService";
+import EditingServiceForm from "../../components/EdtingServiceForm";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -31,14 +32,22 @@ const Services = () => {
 
 	const [dataServices, setNotes] = useState([]);
 	const [openAddingServiceForm, setOpenAddingServiceForm] = useState(false);
+	const [openEditingServiceForm, setOpenEditingServiceForm] = useState(true);
 
 	const [nameService, setNameService] = useState("");
 	const [priceService, setPriceService] = useState("");
 	const [slotService, setSlotService] = useState("");
+
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState(false);
-	const [openDialog, setOpenDialog] = useState(false);
-	const [clickedId, setClickedId] = useState("");
+
+	const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+
+	const [clickedDeleteId, setClickedDeleteId] = useState("");
+
+	const [clickedEditingId, setClickedEditingId] = useState("");
+
+	const [isDataChanged, setIsDataChanged] = useState(false);
 
 	// get list services
 	useEffect(() => {
@@ -52,7 +61,7 @@ const Services = () => {
 		};
 
 		fetchListServices();
-	}, [dataServices]);
+	}, [isDataChanged]);
 
 	const handleOpenAddingServiceForm = () => {
 		setOpenAddingServiceForm(true);
@@ -77,6 +86,7 @@ const Services = () => {
 					setSuccess(true);
 
 					setTimeout(() => {
+						setIsDataChanged(true);
 						setOpenAddingServiceForm(false);
 						setSuccess(false);
 					}, 1500);
@@ -90,69 +100,79 @@ const Services = () => {
 				});
 		};
 
+		setIsDataChanged(false);
 		fetchAddNewService();
 	};
 
-	// handle adding new service
-	// const handleEditingSubmit = () => {
-	// 	const dataNewService = {
-	// 		title: nameService,
-	// 		price: priceService,
-	// 		quantity: slotService,
-	// 	};
+	// handle editing existing services
+	const handleEditingSubmit = (id) => {
+		const dataNewService = {
+			title: nameService,
+			price: priceService,
+			quantity: slotService,
+		};
 
-	// 	const fetchEditNewService = () => {
-	// 		servicesApi
-	// 			.patchService(dataNewService)
-	// 			.then(function (response) {
-	// 				setSuccess(true);
+		const fetchEditNewService = () => {
+			servicesApi
+				.patchService(id, dataNewService)
+				.then(function (response) {
+					setSuccess(true);
 
-	// 				setTimeout(() => {
-	// 					setOpenAddingServiceForm(false);
-	// 					setSuccess(false);
-	// 				}, 1500);
-	// 			})
-	// 			.catch(function (error) {
-	// 				setError(true);
-	// 				setTimeout(() => {
-	// 					setOpenAddingServiceForm(false);
-	// 					setError(false);
-	// 				}, 1500);
-	// 			});
-	// 	};
+					setTimeout(() => {
+						setIsDataChanged(true);
 
-	// 	fetchEditNewService();
-	// };
+						setOpenEditingServiceForm(false);
+						setSuccess(false);
+					}, 1500);
+				})
+				.catch(function (error) {
+					setError(true);
+					setTimeout(() => {
+						setOpenEditingServiceForm(false);
+						setError(false);
+					}, 1500);
+				});
+		};
 
-	const handleCloseDialog = () => {
-		setOpenDialog(false);
-	};
-
-	// handle delete service
-	const handleOpenDialog = (id) => {
-		setOpenDialog(true);
-		setClickedId(id);
+		setIsDataChanged(false);
+		fetchEditNewService();
 	};
 
 	// handle open editing service form
-	// const handleOpenEditForm = (id) => {
-	// 	setOpenAddingServiceForm(true);
-	// 	console.log(id);
-	// };
+	const handleOpenEditForm = (id) => {
+		setOpenEditingServiceForm(true);
+		setClickedEditingId(id);
+	};
+
+	const handleCloseEditForm = () => {
+		setOpenEditingServiceForm(false);
+	};
+
+	const handleOpenDeleteConfirm = (id) => {
+		setOpenDeleteConfirm(true);
+		setClickedDeleteId(id);
+	};
+
+	const handleCloseDeleteConfirm = (id) => {
+		setOpenDeleteConfirm(false);
+	};
 
 	// handle click confirm delete service
-	const handleClickConfirm = (id) => {
+	const handleClickDeleteConfirm = (id) => {
+		console.log("deleted: ", id);
 		servicesApi
 			.deleteService(id)
 			.then(function (response) {
-				// setSuccess(true);
+				setSuccess(true);
 			})
 			.catch(function (error) {
-				// setError(true);
+				setError(true);
 			});
 		setTimeout(() => {
-			setOpenDialog(false);
-		}, 500);
+			setOpenDeleteConfirm(false);
+			setIsDataChanged(true);
+		}, 1500);
+		setIsDataChanged(false);
 	};
 
 	return (
@@ -176,6 +196,8 @@ const Services = () => {
 					</Button>
 				</Grid>
 			</Grid>
+
+			{/* adding service component */}
 			<AddingServiceForm
 				isOpen={openAddingServiceForm}
 				onCloseForm={handleCloseAddingServiceForm}
@@ -186,6 +208,7 @@ const Services = () => {
 				onSuccess={success}
 				onError={error}
 			/>
+
 			<div>
 				<Grid container spacing={3}>
 					{dataServices.map((data) => (
@@ -208,12 +231,28 @@ const Services = () => {
 										variant='contained'
 										color='secondary'
 										onClick={() => {
-											handleOpenDialog(data._id);
+											handleOpenDeleteConfirm(data._id);
 										}}
 									>
 										Xóa dịch vụ
 									</Button>
-									{/* <Button
+									{clickedDeleteId === data._id ? (
+										<ConfirmDeleteService
+											isOpen={openDeleteConfirm}
+											onClose={handleCloseDeleteConfirm}
+											onClickConfirm={(e) => {
+												handleClickDeleteConfirm(data._id);
+											}}
+											id={data._id}
+											onSuccess={success}
+											onError={error}
+											title={data.title}
+										/>
+									) : (
+										""
+									)}
+
+									<Button
 										size='small'
 										variant='contained'
 										color='primary'
@@ -222,11 +261,11 @@ const Services = () => {
 										}}
 									>
 										Chỉnh sửa
-									</Button> */}
-									{/* {clickedId === data._id ? (
-										<EditServiceForm
-											isOpen={openAddingServiceForm}
-											onCloseForm={handleCloseAddingServiceForm}
+									</Button>
+									{clickedEditingId === data._id ? (
+										<EditingServiceForm
+											isOpen={openEditingServiceForm}
+											onCloseForm={handleCloseEditForm}
 											onNameServiceChange={(e) =>
 												setNameService(e.target.value)
 											}
@@ -236,30 +275,20 @@ const Services = () => {
 											onSlotServiceChange={(e) =>
 												setSlotService(e.target.value)
 											}
-											nameService={data.title}
-											price={data.price}
-											quantity={data.quantity}
-											onEditingServiceSubmit={handleEditingSubmit}
+											onEditingServiceSubmit={(e) => {
+												handleEditingSubmit(data._id);
+											}}
 											onSuccess={success}
 											onError={error}
+											nameService={data.title}
+											priceService={data.price}
+											slotService={data.quantity}
 										/>
 									) : (
 										""
-									)} */}
+									)}
 								</CardActions>
 							</Card>
-							{clickedId === data._id ? (
-								<ConfirmDialog
-									isOpen={openDialog}
-									onClose={handleCloseDialog}
-									onClickConfirm={(e) => {
-										handleClickConfirm(data._id);
-									}}
-									id={data._id}
-								/>
-							) : (
-								""
-							)}
 						</Grid>
 					))}
 				</Grid>

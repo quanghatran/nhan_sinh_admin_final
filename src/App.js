@@ -16,6 +16,9 @@ import { PrivateRoute } from "./components/PrivateRoute/PrivateRoute";
 const MainPage = React.lazy(() => import("./features/Home/pages/MainPage"));
 const SignIn = React.lazy(() => import("./features/Auth/pages/SignIn"));
 const Users = React.lazy(() => import("./features/Home/pages/UsersPage"));
+const DirectMeeting = React.lazy(() =>
+	import("./features/Home/pages/DirectMeeting")
+);
 const ListSearchFree = React.lazy(() =>
 	import("./features/Home/pages/ListSearchFree")
 );
@@ -59,6 +62,11 @@ function App() {
 								component={ListSearchFree}
 							/>
 							<PrivateRoute exact path='/services' component={Services} />
+							<PrivateRoute
+								exact
+								path='/direct-meeting'
+								component={DirectMeeting}
+							/>
 						</Layout>
 						<Redirect from='/' to='/sign-in' />
 						{/* <Route path='*' component={NotFound} /> */}

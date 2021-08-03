@@ -20,18 +20,24 @@ function PaperComponent(props) {
 	);
 }
 
-export default function ConfirmDialog(props) {
-	const { isOpen, onClose, onClickConfirm, id, onSuccess, onError, userName } =
-		props;
+export default function ConfirmDeleteService(props) {
+	const {
+		isConfirmDeleteServiceOpen,
+		onConfirmDeleteServiceClose,
+		onClickConfirmDeleteService,
+		onSuccess,
+		onError,
+	} = props;
 
-	const handleClick = (id) => {
-		onClickConfirm(id);
+	const handleClick = () => {
+		console.log("clicked");
+		onClickConfirmDeleteService();
 	};
 
 	return (
 		<Dialog
-			open={isOpen}
-			onClose={onClose}
+			open={isConfirmDeleteServiceOpen}
+			onClose={onConfirmDeleteServiceClose}
 			PaperComponent={PaperComponent}
 			aria-labelledby='draggable-dialog-title'
 		>
@@ -40,16 +46,7 @@ export default function ConfirmDialog(props) {
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText>
-					Bạn có chắc chắc xóa user{" "}
-					<span
-						style={{
-							fontWeight: "bold",
-							margin: "0 5px",
-							fontStyle: "italic",
-						}}
-					>
-						{userName}
-					</span>
+					Bạn có chắc chắc thêm dịch vụ này cho người dùng
 				</DialogContentText>
 				{onSuccess && (
 					<Alert
@@ -57,7 +54,7 @@ export default function ConfirmDialog(props) {
 						severity='success'
 						style={{ marginTop: "1rem", justifyContent: "center" }}
 					>
-						Xóa user thành công
+						Thêm dịch vụ thành công
 					</Alert>
 				)}
 				{onError && (
@@ -66,23 +63,21 @@ export default function ConfirmDialog(props) {
 						severity='error'
 						style={{ marginTop: "1rem", justifyContent: "center" }}
 					>
-						Xóa user không thành công
+						Thêm dịch vụ không thành công
 					</Alert>
 				)}
 			</DialogContent>
 			<DialogActions>
 				<Button
 					autoFocus
-					onClick={onClose}
+					onClick={onConfirmDeleteServiceClose}
 					color='secondary'
 					variant='contained'
 				>
 					Hủy
 				</Button>
 				<Button
-					onClick={(e) => {
-						handleClick(id);
-					}}
+					onClick={handleClick}
 					color='primary'
 					variant='contained'
 					type='button'
