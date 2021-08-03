@@ -18,6 +18,8 @@
     "classnames": "^2.2.6",
     "date-fns": "^2.17.0",
     "moment": "^2.29.1",
+    "prop-types": "^15.7.2",
+    "query-string": "^7.0.1",
     "react": "^17.0.1",
     "react-chartjs-2": "^2.9.0",
     "react-dom": "^17.0.1",
@@ -37,12 +39,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

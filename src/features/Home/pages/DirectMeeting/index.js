@@ -9,7 +9,7 @@ import Alert from "@material-ui/lab/Alert";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import directMeeting from "../../../../api/directMeeting";
-import AddingCoachingService from "../../components/AddingServiceForm";
+import AddingCoachingService from "../../components/AddingCoachingService";
 import EditingServiceForm from "../../components/EdtingServiceForm";
 import NoteSearchFree from "../../components/NoteSearchFree";
 

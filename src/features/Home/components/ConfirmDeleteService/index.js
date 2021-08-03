@@ -36,7 +36,7 @@ export default function ConfirmDeleteService(props) {
 
 	return (
 		<Dialog
-			open={isConfirmDeleteServiceOpen}
+			isOpen={isConfirmDeleteServiceOpen}
 			onClose={onConfirmDeleteServiceClose}
 			PaperComponent={PaperComponent}
 			aria-labelledby='draggable-dialog-title'

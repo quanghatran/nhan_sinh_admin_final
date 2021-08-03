@@ -136,13 +136,16 @@ const AddingCoachingService = (props) => {
 									Xác nhận
 								</Button>
 							</form>
-							<Alert
-								variant='filled'
-								severity='success'
-								style={{ marginTop: "1rem", justifyContent: "center" }}
-							>
-								Đặt lịch cho khách hàng thành công
-							</Alert>
+							{onSuccess && (
+								<Alert
+									variant='filled'
+									severity='success'
+									style={{ marginTop: "1rem", justifyContent: "center" }}
+								>
+									Đặt lịch cho khách hàng thành công
+								</Alert>
+							)}
+
 							{onError && (
 								<Alert
 									variant='filled'

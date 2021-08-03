@@ -149,6 +149,7 @@ const Services = () => {
 	};
 
 	const handleOpenDeleteConfirm = (id) => {
+		console.log(id);
 		setOpenDeleteConfirm(true);
 		setClickedDeleteId(id);
 	};
