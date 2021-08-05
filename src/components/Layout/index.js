@@ -142,17 +142,12 @@ export default function Layout({ children }) {
 	const drawer = (
 		<div>
 			<div className={classes.toolbar} />
-			<div>
-				<div style={{ textAlign: "center" }}>
-					<img alt='admin' src={logoSatsi} style={{ width: "140px" }} />
-				</div>
-				<Typography variant='h6' className={classes.title}>
-					Minh Triết Nhân Sinh
-				</Typography>
+			<div style={{ textAlign: "center" }}>
+				<img alt='admin' src={logoSatsi} style={{ width: "140px" }} />
 			</div>
-
-			<Divider />
-			{/* links/list section */}
+			<Typography variant='h6' className={classes.title}>
+				Minh Triết Nhân Sinh
+			</Typography>
 			<List>
 				{menuItems.map((item) => (
 					<ListItem
@@ -161,8 +156,7 @@ export default function Layout({ children }) {
 						onClick={(e) => {
 							handleClickNavigate(item.path);
 						}}
-						className={location.pathname == item.path ? classes.active : null}
-					>
+						className={location.pathname == item.path ? classes.active : null}>
 						<ListItemIcon>{item.icon}</ListItemIcon>
 						<ListItemText primary={item.text} />
 					</ListItem>
@@ -182,8 +176,7 @@ export default function Layout({ children }) {
 						aria-label='open drawer'
 						edge='start'
 						onClick={handleDrawerToggle}
-						className={classes.menuButton}
-					>
+						className={classes.menuButton}>
 						<MenuIcon />
 					</IconButton>
 					<Typography className={classes.date}>
@@ -195,8 +188,7 @@ export default function Layout({ children }) {
 						<IconButton
 							variant='contained'
 							onClick={handleLogout}
-							aria-label='delete'
-						>
+							aria-label='delete'>
 							<Typography variant='caption' style={{ color: "white" }}>
 								Đăng xuất
 							</Typography>
@@ -222,8 +214,7 @@ export default function Layout({ children }) {
 						}}
 						ModalProps={{
 							keepMounted: true, // Better open performance on mobile.
-						}}
-					>
+						}}>
 						{drawer}
 					</Drawer>
 				</Hidden>
@@ -233,8 +224,7 @@ export default function Layout({ children }) {
 							paper: classes.drawerPaper,
 						}}
 						variant='permanent'
-						open
-					>
+						open>
 						{drawer}
 					</Drawer>
 				</Hidden>

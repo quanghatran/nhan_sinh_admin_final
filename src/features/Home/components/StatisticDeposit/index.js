@@ -4,6 +4,7 @@ import { Bar } from "react-chartjs-2";
 import statisticApi from "../../../../api/statisticApi";
 import { Row, Col, Card, CardHeader, CardBody, Button } from "shards-react";
 import moment from "moment";
+import RangeDatePicker from "../../../../components/common/RangeDatePicker";
 
 const date = new Date();
 
@@ -16,6 +17,8 @@ const StatisticDeposit = () => {
 	const [amountMoney, setAmountMoney] = useState([]);
 	const [startDay, setStartDay] = useState(initialStartDay);
 	const [endDay, setEndDay] = useState(initialEndDay);
+
+	const [isStateChanged, setIsStartChanged] = useState(false);
 
 	useEffect(() => {
 		const fetchStatisticDeposit = () => {
@@ -34,7 +37,7 @@ const StatisticDeposit = () => {
 				});
 		};
 		fetchStatisticDeposit();
-	}, []);
+	}, [isStateChanged]);
 
 	const data = {
 		labels: labelsDayRange,
@@ -61,13 +64,22 @@ const StatisticDeposit = () => {
 		},
 	};
 
+	const handleFilter = (data) => {
+		setIsStartChanged(true);
+		setTimeout(() => {
+			setIsStartChanged(false);
+		}, 1500);
+
+		setStartDay(data.start);
+		setEndDay(data.end);
+	};
+
 	return (
 		<React.Fragment>
 			<div className='header'>
 				<Typography
 					variant='h5'
-					style={{ margin: "2rem 0 1rem", textAlign: "center" }}
-				>
+					style={{ margin: "2rem 0 1rem", textAlign: "center" }}>
 					Tổng số tiền nhận được theo từng ngày
 				</Typography>
 			</div>
@@ -76,14 +88,21 @@ const StatisticDeposit = () => {
 					<h6 className='m-0'>Thống kê tổng số tiền nhận trong ngày</h6>
 				</CardHeader>
 				<CardBody className='pt-0'>
-					{/* <Row className='border-bottom py-2 bg-light'>
+					<Row className='border-bottom py-2 bg-light'>
 						<Col sm='6' className='d-flex mb-2 mb-sm-0'>
 							<RangeDatePicker
-								startDay={(e) => setStartDay(e.target.value)}
-								endDay={(e) => setEndDay(e.target.value)}
+								startDay={startDay}
+								endDay={endDay}
+								onStartDayChange={(e) => {
+									setStartDay(e.target.value);
+								}}
+								onEndDayChange={(e) => {
+									setEndDay(e.target.value);
+								}}
+								onFilter={handleFilter}
 							/>
 						</Col>
-					</Row> */}
+					</Row>
 					<Bar data={data} options={options} />
 				</CardBody>
 			</Card>

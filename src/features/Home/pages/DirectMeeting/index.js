@@ -8,9 +8,8 @@ import AddIcon from "@material-ui/icons/Add";
 import Alert from "@material-ui/lab/Alert";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import directMeeting from "../../../../api/directMeeting";
+import directMeetingApi from "../../../../api/directMeetingApi";
 import AddingCoachingService from "../../components/AddingCoachingService";
-import EditingServiceForm from "../../components/EdtingServiceForm";
 import NoteSearchFree from "../../components/NoteSearchFree";
 
 const useStyles = makeStyles((theme) => ({
@@ -32,28 +31,32 @@ const useStyles = makeStyles((theme) => ({
 const DirectMeeting = () => {
 	const classes = useStyles();
 
-	const [openEditingServiceForm, setOpenEditingServiceForm] = useState(true);
 	const [openAddingCoaching, setOpenAddingCoaching] = useState(false);
 
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState(false);
-	const [clickedId, setClickedId] = useState("");
 
 	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [birthDay, setBirthDay] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
+	const [email, setEmail] = useState("");
+	const [coacher, setCoacher] = useState("");
+	const [time, setTime] = useState("");
 	const [address, setAddress] = useState("");
 
 	const [listDirectMeet, setListDirectMeet] = useState([]);
+	const [listCoacher, setListCoacher] = useState([]);
 
 	const [isDataChanged, setIsDataChanged] = useState(false);
+
+	const [openNote, setOpenNote] = useState(false);
+	const [clickedIdChangeForm, setClickedIdChangeForm] = useState("");
+	const [newNote, setNewNote] = useState("");
 
 	// get list direct meet
 	useEffect(() => {
 		const fetchListDirectMeet = async () => {
 			try {
-				const response = await directMeeting.getListDirectMeet();
+				const response = await directMeetingApi.getListDirectMeet();
 				setListDirectMeet(response.data);
 			} catch (error) {
 				console.log("failed to fetch product list: ", error);
@@ -63,6 +66,19 @@ const DirectMeeting = () => {
 		fetchListDirectMeet();
 	}, [isDataChanged]);
 
+	// get list coachers
+	useEffect(() => {
+		const fetchListCoachers = async () => {
+			try {
+				const response = await directMeetingApi.getListCoacher();
+				setListCoacher(response.data);
+			} catch (error) {
+				console.log("failed to fetch product list: ", error);
+			}
+		};
+		fetchListCoachers();
+	}, []);
+
 	const handleOpenAddingCoaching = () => {
 		setOpenAddingCoaching(true);
 	};
@@ -71,18 +87,28 @@ const DirectMeeting = () => {
 		setOpenAddingCoaching(false);
 	};
 
+	const handleChangeNoteClose = () => {
+		setOpenNote(false);
+	};
+
+	const handleOpenEditNote = (id) => {
+		setOpenNote(true);
+		setClickedIdChangeForm(id);
+	};
+
 	// handle adding new service
 	const handleAddingCoachingSubmit = () => {
 		const useInfo = {
 			name: name,
-			email: email,
-			birthDay: birthDay,
 			phoneNumber: phoneNumber,
+			email: email,
+			coacher: coacher,
+			time: time,
 			address: address,
 		};
 
 		const fetchAddCoaching = () => {
-			directMeeting
+			directMeetingApi
 				.postNewDirectMeeting(useInfo)
 				.then(function (response) {
 					setSuccess(true);
@@ -104,19 +130,6 @@ const DirectMeeting = () => {
 		fetchAddCoaching();
 	};
 
-	const [openNote, setOpenNote] = useState(false);
-	const [clickedIdChangeForm, setClickedIdChangeForm] = useState("");
-	const [newNote, setNewNote] = useState("");
-
-	const handleChangeNoteClose = () => {
-		setOpenNote(false);
-	};
-
-	const handleOpenEditNote = (id) => {
-		setOpenNote(true);
-		setClickedIdChangeForm(id);
-	};
-
 	// handle change content of note
 	const handleNoteSubmit = (id) => {
 		if (id && newNote) {
@@ -125,7 +138,7 @@ const DirectMeeting = () => {
 			};
 
 			const fetchChangeNote = () => {
-				directMeeting
+				directMeetingApi
 					.patchEditNote(id, dataNewNote)
 					.then(function (response) {
 						setSuccess(true);
@@ -156,8 +169,7 @@ const DirectMeeting = () => {
 		<React.Fragment>
 			<Grid
 				container
-				style={{ justifyContent: "space-between", marginBottom: "1rem" }}
-			>
+				style={{ justifyContent: "space-between", marginBottom: "1rem" }}>
 				<Grid item>
 					<Typography variant='h5'>
 						Danh sách sử dụng dịch vụ Coaching
@@ -169,8 +181,7 @@ const DirectMeeting = () => {
 						variant='contained'
 						color='primary'
 						onClick={handleOpenAddingCoaching}
-						startIcon={<AddIcon />}
-					>
+						startIcon={<AddIcon />}>
 						Thêm COACHING
 					</Button>
 				</Grid>
@@ -182,8 +193,11 @@ const DirectMeeting = () => {
 				onCloseForm={handleCloseAddingCoaching}
 				onNameChange={(e) => setName(e.target.value)}
 				onEmailChange={(e) => setEmail(e.target.value)}
-				onBirthDayChange={(e) => setBirthDay(e.target.value)}
+				onTimeChange={(e) => setTime(e.target.value)}
 				onPhoneNumberChange={(e) => setPhoneNumber(e.target.value)}
+				onCoacherChange={(e) => setCoacher(e.target.value)}
+				listCoacher={listCoacher}
+				coacher={coacher}
 				onAddressChange={(e) => setAddress(e.target.value)}
 				onAddingCoachingSubmit={handleAddingCoachingSubmit}
 				onSuccess={success}
@@ -200,25 +214,29 @@ const DirectMeeting = () => {
 										<Typography
 											variant='h6'
 											component='h2'
-											style={{ marginBottom: "1rem" }}
-										>
-											{data.name} - {moment(data.birthDay).format("DD/MM/YYYY")}
+											style={{ marginBottom: "1rem" }}>
+											{data.name}
 										</Typography>
 
 										<Typography className={classes.pos} color='textSecondary'>
-											SĐT: {data.phoneNumber}
+											SĐT: {data.phoneNumber} - Địa chỉ: {data.address}
 										</Typography>
 										<Typography className={classes.pos} color='textSecondary'>
 											Email: {data.email}
 										</Typography>
-										<Typography className={classes.pos} color='textSecondary'>
+										{/* <Typography className={classes.pos} color='textSecondary'>
 											Địa chỉ: {data.address}
+										</Typography> */}
+										<Typography className={classes.pos} color='textSecondary'>
+											Coacher: {data.coacher.name}
+										</Typography>
+										<Typography className={classes.pos} color='textSecondary'>
+											Thời gian coaching: {data.time}
 										</Typography>
 										<Typography
 											variant='body2'
 											component='p'
-											style={{ color: "#d500f9" }}
-										>
+											style={{ color: "#d500f9" }}>
 											Note: {data.note}{" "}
 										</Typography>
 									</CardContent>
@@ -229,8 +247,7 @@ const DirectMeeting = () => {
 											color='primary'
 											onClick={(e) => {
 												handleOpenEditNote(data._id);
-											}}
-										>
+											}}>
 											note
 										</Button>
 										{data._id === clickedIdChangeForm ? (

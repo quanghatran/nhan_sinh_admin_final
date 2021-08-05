@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-import classNames from "classnames";
-import TextField from "@material-ui/core/TextField";
-import { makeStyles } from "@material-ui/core/styles";
-
-import "./RangeDatePicker.css";
 import { Button } from "@material-ui/core";
-import moment from "moment";
+import { makeStyles } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import classNames from "classnames";
+import React from "react";
+import "./RangeDatePicker.css";
 
 const useStyles = makeStyles((theme) => ({
 	container: {
@@ -20,31 +18,17 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const date = new Date();
-
-const initialEndDay = moment(date).format("YYYY-MM-DD");
-
-const initialStartDay = moment().subtract(1, "months").format("YYYY-MM-DD");
-
 const RangeDatePicker = (props) => {
 	const classes1 = useStyles();
 	const classes = classNames("d-flex", "my-auto", "date-range");
 
-	const [startDay, setStartDay] = useState(initialStartDay);
-	const [endDay, setEndDay] = useState(initialEndDay);
+	const { startDay, endDay, onStartDayChange, onEndDayChange, onFilter } =
+		props;
 
-	// const { initialSatdataFilter } = props;
-
-	// const handleStartDateChange = (value) => {
-	// 	setStartDate(Date(value));
-	// };
-
-	// const handleEndDateChange = (value) => {
-	// 	setEndDate(Date(value));
-	// };
-
-	const handleFilter = () => {
+	const handleClick = () => {
 		const dataFilter = { start: startDay, end: endDay };
+		onFilter(dataFilter);
+
 		console.log(dataFilter);
 	};
 
@@ -56,7 +40,7 @@ const RangeDatePicker = (props) => {
 				type='date'
 				defaultValue={startDay}
 				className={classes.textField}
-				onChange={(e) => setStartDay(e.target.value)}
+				onChange={onStartDayChange}
 				InputLabelProps={{
 					shrink: true,
 				}}
@@ -67,7 +51,7 @@ const RangeDatePicker = (props) => {
 				type='date'
 				defaultValue={endDay}
 				className={classes.textField}
-				onChange={(e) => setEndDay(e.target.value)}
+				onChange={onEndDayChange}
 				InputLabelProps={{
 					shrink: true,
 				}}
@@ -77,8 +61,9 @@ const RangeDatePicker = (props) => {
 				variant='contained'
 				size='small'
 				style={{ marginLeft: "0.3rem" }}
-				onClick={handleFilter}
-			>
+				onClick={(e) => {
+					handleClick();
+				}}>
 				Lọc
 			</Button>
 		</form>

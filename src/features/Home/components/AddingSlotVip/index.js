@@ -1,21 +1,9 @@
-import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	Container,
-	Fade,
-	Grid,
-	Modal,
-	TextField,
-	Typography,
-} from "@material-ui/core";
+import { Button, Container, Fade, Modal, Typography } from "@material-ui/core";
 import Backdrop from "@material-ui/core/Backdrop";
-import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
+import Alert from "@material-ui/lab/Alert";
 import React, { useEffect, useState } from "react";
 import servicesApi from "../../../../api/servicesApi";
-import ConfirmDeleteService from "../ConfirmDeleteService";
 
 const useStyles = makeStyles((theme) => ({
 	modal: {
@@ -36,24 +24,15 @@ const AddingSlotVip = (props) => {
 		nameUserChange,
 		isOpenForm,
 		onCloseForm,
-		setIdService,
-		onClickConfirmDeleteService,
+		onClickAddingService,
 		onSuccess,
 		onError,
 	} = props;
 
 	const [dataServices, setDataService] = useState([]);
 
-	const [isConfirmDeleteServiceOpen, setIsConfirmDeleteServiceOpen] =
-		useState(false);
-
-	const handleAddingSlotVip = (id) => {
-		setIdService(id);
-		setIsConfirmDeleteServiceOpen(true);
-	};
-
-	const onConfirmDeleteServiceClose = () => {
-		setIsConfirmDeleteServiceOpen(false);
+	const handleAddingSlotVip = async (id) => {
+		onClickAddingService(id);
 	};
 
 	// get list services
@@ -81,8 +60,7 @@ const AddingSlotVip = (props) => {
 			BackdropComponent={Backdrop}
 			BackdropProps={{
 				timeout: 500,
-			}}
-		>
+			}}>
 			<Fade in={isOpenForm}>
 				<div className={classes.paper}>
 					<Container size='sm'>
@@ -93,20 +71,17 @@ const AddingSlotVip = (props) => {
 									fontWeight: "bold",
 									margin: "0 5px",
 									fontStyle: "italic",
-								}}
-							>
+								}}>
 								{nameUserChange}
 							</span>
 						</Typography>
-
 						{dataServices.length > 0 ? (
 							dataServices.map((data) => (
 								<div
 									key={data._id}
 									style={{
 										marginBottom: "2rem",
-									}}
-								>
+									}}>
 									<Typography variant='h6' component='h2'>
 										{data.title}{" "}
 										<span style={{ fontSize: "1rem", fontWeight: "lighter" }}>
@@ -119,8 +94,7 @@ const AddingSlotVip = (props) => {
 										size='small'
 										onClick={(e) => {
 											handleAddingSlotVip(data._id);
-										}}
-									>
+										}}>
 										Thêm service cho USER
 									</Button>
 								</div>
@@ -130,24 +104,38 @@ const AddingSlotVip = (props) => {
 								Chưa có dữ liệu
 							</Alert>
 						)}
-
+						{onSuccess && (
+							<Alert
+								variant='filled'
+								severity='success'
+								style={{ marginBottom: "1rem", justifyContent: "center" }}>
+								Thêm dịch vụ thành công
+							</Alert>
+						)}
+						{onError && (
+							<Alert
+								variant='filled'
+								severity='error'
+								style={{ marginBottom: "1rem", justifyContent: "center" }}>
+								Thêm dịch vụ không thành công
+							</Alert>
+						)}
 						<div style={{ textAlign: "center" }}>
 							<Button
 								color='secondary'
 								variant='contained'
-								onClick={onCloseForm}
-							>
+								onClick={onCloseForm}>
 								Đóng
 							</Button>
 						</div>
-
-						<ConfirmDeleteService
-							isConfirmDeleteServiceOpen={isConfirmDeleteServiceOpen}
-							onConfirmDeleteServiceClose={onConfirmDeleteServiceClose}
-							onClickConfirmDeleteService={onClickConfirmDeleteService}
+						{/* 
+						<ConfirmAddingSlotVip
+							isConfirmAddingServiceOpen={isConfirmAddingServiceOpen}
+							onConfirmAddingServiceClose={onConfirmAddingServiceClose}
+							onClickConfirmAddingService={handleConfirmAddingService}
 							onSuccess={onSuccess}
 							onError={onError}
-						/>
+						/> */}
 					</Container>
 				</div>
 			</Fade>

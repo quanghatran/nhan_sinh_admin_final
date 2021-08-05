@@ -13,80 +13,68 @@ function PaperComponent(props) {
 	return (
 		<Draggable
 			handle='#draggable-dialog-title'
-			cancel={'[class*="MuiDialogContent-root"]'}
-		>
+			cancel={'[class*="MuiDialogContent-root"]'}>
 			<Paper {...props} />
 		</Draggable>
 	);
 }
 
-export default function ConfirmDialog(props) {
-	const { isOpen, onClose, onClickConfirm, id, onSuccess, onError, userName } =
-		props;
+export default function ConfirmAddingSlotVip(props) {
+	const {
+		isConfirmAddingServiceOpen,
+		onConfirmAddingServiceClose,
+		onClickConfirmAddingService,
+		onSuccess,
+		onError,
+	} = props;
 
-	const handleClick = (id) => {
-		onClickConfirm(id);
+	const handleClick = () => {
+		onClickConfirmAddingService();
 	};
 
 	return (
 		<Dialog
-			open={isOpen}
-			onClose={onClose}
+			open={isConfirmAddingServiceOpen}
+			onClose={onConfirmAddingServiceClose}
 			PaperComponent={PaperComponent}
-			aria-labelledby='draggable-dialog-title'
-		>
+			aria-labelledby='draggable-dialog-title'>
 			<DialogTitle style={{ cursor: "move" }} id='draggable-dialog-title'>
 				Xác nhận
 			</DialogTitle>
 			<DialogContent>
-				<DialogContentText>
-					Bạn có chắc chắc xóa user{" "}
-					<span
-						style={{
-							fontWeight: "bold",
-							margin: "0 5px",
-							fontStyle: "italic",
-						}}
-					>
-						{userName}
-					</span>
-				</DialogContentText>
+				<DialogContentText>Bạn có chắc thêm dịch vụ này cho</DialogContentText>
 				{onSuccess && (
 					<Alert
 						variant='filled'
 						severity='success'
-						style={{ marginTop: "1rem", justifyContent: "center" }}
-					>
-						Xóa user thành công
+						style={{ marginTop: "1rem", justifyContent: "center" }}>
+						Thêm dịch vụ thành công
 					</Alert>
 				)}
 				{onError && (
 					<Alert
 						variant='filled'
 						severity='error'
-						style={{ marginTop: "1rem", justifyContent: "center" }}
-					>
-						Xóa user không thành công
+						style={{ marginTop: "1rem", justifyContent: "center" }}>
+						Thêm dịch vụ không thành công
 					</Alert>
 				)}
 			</DialogContent>
 			<DialogActions>
 				<Button
 					autoFocus
-					onClick={onClose}
+					onClick={onConfirmAddingServiceClose}
 					color='secondary'
-					variant='contained'
-				>
+					variant='contained'>
 					Hủy
 				</Button>
 				<Button
 					onClick={(e) => {
-						handleClick(id);
+						handleClick();
 					}}
 					color='primary'
 					variant='contained'
-					type='button'
-				>
+					type='button'>
 					Xác nhận
 				</Button>
 			</DialogActions>

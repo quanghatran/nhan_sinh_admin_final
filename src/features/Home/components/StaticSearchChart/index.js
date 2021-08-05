@@ -2,8 +2,9 @@ import { Typography } from "@material-ui/core";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { Card, CardBody, CardHeader } from "shards-react";
+import { Card, CardBody, CardHeader, Col, Row } from "shards-react";
 import statisticApi from "../../../../api/statisticApi";
+import RangeDatePicker from "../../../../components/common/RangeDatePicker";
 
 const date = new Date();
 
@@ -19,6 +20,8 @@ const StaticSearchChart = () => {
 
 	const [startDay, setStartDay] = useState(initialStartDay);
 	const [endDay, setEndDay] = useState(initialEndDay);
+
+	const [isStateChanged, setIsStartChanged] = useState(false);
 
 	const data = {
 		labels: labelsDayRange,
@@ -50,6 +53,7 @@ const StaticSearchChart = () => {
 		},
 	};
 
+	// get statistic amount of search free, vip search and direct coaching
 	useEffect(() => {
 		const fetchStatisticSearchFree = () => {
 			statisticApi
@@ -97,15 +101,24 @@ const StaticSearchChart = () => {
 		fetchStatisticSearchFree();
 		fetchStatisticSearchVip();
 		fetchStatisticDirect();
-	}, []);
+	}, [isStateChanged]);
+
+	const handleFilter = (data) => {
+		setIsStartChanged(true);
+		setTimeout(() => {
+			setIsStartChanged(false);
+		}, 1500);
+
+		setStartDay(data.start);
+		setEndDay(data.end);
+	};
 
 	return (
 		<React.Fragment>
 			<div className='header'>
 				<Typography
 					variant='h5'
-					style={{ margin: "2rem 0 1rem", textAlign: "center" }}
-				>
+					style={{ margin: "2rem 0 1rem", textAlign: "center" }}>
 					Số lượt tra cứu theo từng ngày
 				</Typography>
 			</div>
@@ -114,17 +127,21 @@ const StaticSearchChart = () => {
 					<h6 className='m-0'>Thống kê số lượt tra cứu theo từng ngày</h6>
 				</CardHeader>
 				<CardBody className='pt-0'>
-					{/* <Row className='border-bottom py-2 bg-light'>
+					<Row className='border-bottom py-2 bg-light'>
 						<Col sm='6' className='d-flex mb-2 mb-sm-0'>
 							<RangeDatePicker
 								startDay={startDay}
 								endDay={endDay}
-								setStartDay={setStartDay}
-								setEndDay={setEndDay}
-								// onFilter
+								onStartDayChange={(e) => {
+									setStartDay(e.target.value);
+								}}
+								onEndDayChange={(e) => {
+									setEndDay(e.target.value);
+								}}
+								onFilter={handleFilter}
 							/>
 						</Col>
-					</Row> */}
+					</Row>
 					<Line data={data} options={options} />
 				</CardBody>
 			</Card>

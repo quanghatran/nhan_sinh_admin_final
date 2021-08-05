@@ -10,7 +10,9 @@ import TableFooter from "@material-ui/core/TableFooter";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
 import AddOutlinedIcon from "@material-ui/icons/AddOutlined";
+import AddShoppingCartOutlinedIcon from "@material-ui/icons/AddShoppingCartOutlined";
 import CheckBoxOutlinedIcon from "@material-ui/icons/CheckBoxOutlined";
+import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
 import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
@@ -18,16 +20,10 @@ import LastPageIcon from "@material-ui/icons/LastPage";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import customerApi from "../../../../api/customerApi";
+import ConfirmDialog from "../../../../components/ConfirmDialog";
+import AddingSlotVip from "../../components/AddingSlotVip";
 import DepositUserForm from "../../components/DepositUserForm";
 import ListServiceBought from "../../components/ListServiceBought";
-import DeleteOutlineOutlinedIcon from "@material-ui/icons/DeleteOutlineOutlined";
-import ConfirmDialog from "../../../../components/ConfirmDialog";
-import AddShoppingCartOutlinedIcon from "@material-ui/icons/AddShoppingCartOutlined";
-import EditLocationOutlinedIcon from "@material-ui/icons/EditLocationOutlined";
-import ContactSupportOutlinedIcon from "@material-ui/icons/ContactSupportOutlined";
-import ListVipSearched from "../../components/ListVipSearched";
-import AddingSlotVip from "../../components/AddingSlotVip";
-import servicesApi from "../../../../api/servicesApi";
 
 const useStyles1 = makeStyles((theme) => ({
 	root: {
@@ -77,15 +73,13 @@ function TablePaginationActions(props) {
 			<IconButton
 				onClick={handleFirstPageButtonClick}
 				disabled={page === 0}
-				aria-label='first page'
-			>
+				aria-label='first page'>
 				{theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
 			</IconButton>
 			<IconButton
 				onClick={handleBackButtonClick}
 				disabled={page === 0}
-				aria-label='previous page'
-			>
+				aria-label='previous page'>
 				{theme.direction === "rtl" ? (
 					<KeyboardArrowRight />
 				) : (
@@ -95,8 +89,7 @@ function TablePaginationActions(props) {
 			<IconButton
 				onClick={handleNextButtonClick}
 				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-				aria-label='next page'
-			>
+				aria-label='next page'>
 				{theme.direction === "rtl" ? (
 					<KeyboardArrowLeft />
 				) : (
@@ -106,8 +99,7 @@ function TablePaginationActions(props) {
 			<IconButton
 				onClick={handleLastPageButtonClick}
 				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-				aria-label='last page'
-			>
+				aria-label='last page'>
 				{theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
 			</IconButton>
 		</div>
@@ -189,7 +181,6 @@ export default function CustomPaginationActionsTable() {
 		const fetchGetListUsers = async () => {
 			try {
 				const response = await customerApi.getListUsers();
-				console.log(response.data);
 				setRows(response.data);
 			} catch (error) {
 				// console.log("failed to fetch product list: ", error);
@@ -240,8 +231,6 @@ export default function CustomPaginationActionsTable() {
 					const response = await customerApi.getListServiceUserBought(
 						clickedOpenListServiceBought
 					);
-					console.log(response.data);
-					console.log(clickedOpenListServiceBought);
 					setListServiceUserBought(response.data);
 				} catch (error) {
 					console.log("failed to fetch product list: ", error);
@@ -263,7 +252,6 @@ export default function CustomPaginationActionsTable() {
 				customerApi
 					.deleteUser(id)
 					.then(function (response) {
-						console.log("deleted: ", id);
 						setSuccess(true);
 
 						setTimeout(() => {
@@ -290,8 +278,6 @@ export default function CustomPaginationActionsTable() {
 	const [openAddingSlotVip, setOpenAddingSlotVip] = useState(false);
 	const [clickedOpenAddingSlotVip, setClickedOpenAddingSlotVip] = useState("");
 
-	const [idService, setIdService] = useState("");
-
 	const handleOpenAddingSlotVip = (id) => {
 		setOpenAddingSlotVip(true);
 		setClickedOpenAddingSlotVip(id);
@@ -302,14 +288,12 @@ export default function CustomPaginationActionsTable() {
 	};
 
 	// adding new slot vip for user by admin
-	const handleSubmitChangeSlotVipSubmit = (idUser) => {
+	const handleSubmitChangeSlotVipSubmit = (idUser, idService) => {
 		if (idUser && idService) {
 			const dataSlotVip = {
 				serviceID: idService,
 				userID: idUser,
 			};
-
-			// -> lấy danh sách id  của dịch vụ.
 
 			const fetchChangeSlotVip = () => {
 				customerApi
@@ -379,8 +363,7 @@ export default function CustomPaginationActionsTable() {
 												<IconButton
 													aria-label='deposit'
 													type='button'
-													onClick={() => handleListServiceBoughtOpen(row._id)}
-												>
+													onClick={() => handleListServiceBoughtOpen(row._id)}>
 													<CheckBoxOutlinedIcon color='secondary' />
 												</IconButton>
 											</Tooltip>
@@ -411,8 +394,7 @@ export default function CustomPaginationActionsTable() {
 												<IconButton
 													aria-label='deposit'
 													type='button'
-													onClick={() => handleOpenAddingSlotVip(row._id)}
-												>
+													onClick={() => handleOpenAddingSlotVip(row._id)}>
 													<AddShoppingCartOutlinedIcon color='secondary' />
 												</IconButton>
 											</Tooltip>
@@ -423,11 +405,8 @@ export default function CustomPaginationActionsTable() {
 											nameUserChange={row.name}
 											isOpenForm={openAddingSlotVip}
 											onCloseForm={handleCloseAddingSlotVip}
-											setIdService={(idService) => {
-												setIdService(idService);
-											}}
-											onClickConfirmDeleteService={(e) => {
-												handleSubmitChangeSlotVipSubmit(row._id);
+											onClickAddingService={(idService) => {
+												handleSubmitChangeSlotVipSubmit(row._id, idService);
 											}}
 											onSuccess={success}
 											onError={error}
@@ -447,8 +426,7 @@ export default function CustomPaginationActionsTable() {
 												<IconButton
 													aria-label='deposit'
 													type='button'
-													onClick={() => handleChangeMoneyOpen(row._id)}
-												>
+													onClick={() => handleChangeMoneyOpen(row._id)}>
 													<AddOutlinedIcon color='secondary' />
 												</IconButton>
 											</Tooltip>
@@ -474,8 +452,7 @@ export default function CustomPaginationActionsTable() {
 										<IconButton
 											aria-label='deposit'
 											type='button'
-											onClick={() => handleDeleteUser(row._id)}
-										>
+											onClick={() => handleDeleteUser(row._id)}>
 											<DeleteOutlineOutlinedIcon color='secondary' />
 										</IconButton>
 									</Tooltip>

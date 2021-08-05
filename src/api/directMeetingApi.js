@@ -1,6 +1,6 @@
 import axiosAdmin from "./axiosAdmin";
 
-const directMeeting = {
+const directMeetingApi = {
 	getListDirectMeet: (params) => {
 		const url = "/api/admin/gap-truc-tiep";
 		return axiosAdmin.get(url, params);
@@ -13,6 +13,10 @@ const directMeeting = {
 		const url = `/api/admin/note-gap-truc-tiep/${id}`;
 		return axiosAdmin.patch(url, params);
 	},
+	getListCoacher: (params) => {
+		const url = "/api/admin/get-all-coacher";
+		return axiosAdmin.get(url, params);
+	},
 };
 
-export default directMeeting;
+export default directMeetingApi;
