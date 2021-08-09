@@ -190,32 +190,63 @@ export default function CustomPaginationActionsTable() {
 		fetchGetListUsers();
 	}, [isListChanged]);
 
-	// handle change money of users
+	// // handle change money of users using async function and promise technique
+	// const handleSubmit = (idUser) => {
+	// 	if (idUser && newMoney) {
+	// 		const dataNewMoney = {
+	// 			newMoney: newMoney,
+	// 		};
+
+	// 		const fetchChangeMoney = () => {
+	// 			customerApi
+	// 				.patchMoney(idUser, dataNewMoney)
+	// 				.then(function (response) {
+	// 					setSuccess(true);
+
+	// 					setTimeout(() => {
+	// 						setIsListChanged(false);
+	// 						setOpenChangeMoneyForm(false);
+	// 						setSuccess(false);
+	// 					}, 1500);
+	// 				})
+	// 				.catch(function (error) {
+	// 					setError(true);
+	// 					setTimeout(() => {
+	// 						setOpenChangeMoneyForm(false);
+	// 						setError(false);
+	// 					}, 1500);
+	// 				});
+	// 		};
+
+	// 		setIsListChanged(true);
+	// 		fetchChangeMoney();
+	// 	}
+	// };
+
+	// handle change money of users using async/await technique
 	const handleSubmit = (idUser) => {
 		if (idUser && newMoney) {
 			const dataNewMoney = {
 				newMoney: newMoney,
 			};
 
-			const fetchChangeMoney = () => {
-				customerApi
-					.patchMoney(idUser, dataNewMoney)
-					.then(function (response) {
-						setSuccess(true);
+			const fetchChangeMoney = async () => {
+				try {
+					await customerApi.patchMoney(idUser, dataNewMoney);
+					setSuccess(true);
 
-						setTimeout(() => {
-							setIsListChanged(false);
-							setOpenChangeMoneyForm(false);
-							setSuccess(false);
-						}, 1500);
-					})
-					.catch(function (error) {
-						setError(true);
-						setTimeout(() => {
-							setOpenChangeMoneyForm(false);
-							setError(false);
-						}, 1500);
-					});
+					setTimeout(() => {
+						setIsListChanged(false);
+						setOpenChangeMoneyForm(false);
+						setSuccess(false);
+					}, 1500);
+				} catch {
+					setError(true);
+					setTimeout(() => {
+						setOpenChangeMoneyForm(false);
+						setError(false);
+					}, 1500);
+				}
 			};
 
 			setIsListChanged(true);

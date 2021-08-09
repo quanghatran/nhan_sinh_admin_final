@@ -101,8 +101,7 @@ const SignIn = () => {
 						<form
 							className={classes.form}
 							autoComplete='off'
-							onSubmit={handleSubmitSignIn}
-						>
+							onSubmit={handleSubmitSignIn}>
 							<TextField
 								label='Phone number'
 								color='secondary'
@@ -132,8 +131,7 @@ const SignIn = () => {
 								<Alert
 									variant='filled'
 									severity='error'
-									style={{ marginTop: "1rem", justifyContent: "center" }}
-								>
+									style={{ marginTop: "1rem", justifyContent: "center" }}>
 									Tài khoản hoặc mật khẩu không chính xác
 								</Alert>
 							)}
@@ -142,8 +140,7 @@ const SignIn = () => {
 								color='primary'
 								type='submit'
 								fullWidth
-								className={classes.submit}
-							>
+								className={classes.submit}>
 								Đăng Nhập
 							</Button>
 						</form>

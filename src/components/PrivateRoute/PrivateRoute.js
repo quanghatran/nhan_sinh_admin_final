@@ -3,29 +3,6 @@ import { Route, Redirect, useHistory } from "react-router-dom";
 
 export const PrivateRoute = ({ component: Component, ...rest }) => {
 	const history = useHistory();
-	useEffect(() => {
-		var myHeaders = new Headers();
-		myHeaders.append(
-			"Authorization",
-			"Bearer " + localStorage.getItem("token")
-		);
-
-		var requestOptions = {
-			method: "GET",
-			headers: myHeaders,
-			redirect: "follow",
-		};
-
-		fetch(`${process.env.REACT_APP_API_URL_LP}/auth`, requestOptions)
-			.then((response) => {
-				if (!response.ok) {
-					localStorage.removeItem("token");
-					history.push("/sign-in");
-				}
-				response.text();
-			})
-			.catch((error) => console.log("error", error));
-	});
 
 	return (
 		<Route
