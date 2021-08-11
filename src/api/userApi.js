@@ -3,7 +3,7 @@ import axiosAdmin from "./axiosAdmin";
 const userApi = {
 	// post phone and password, received a token, save in local storage
 	signIn: (params) => {
-		const url = "/api/users/signin";
+		const url = "/api/admin/signin";
 		return axiosAdmin.post(url, params);
 	},
 
