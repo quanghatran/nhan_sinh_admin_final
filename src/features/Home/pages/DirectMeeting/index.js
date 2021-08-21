@@ -6,12 +6,13 @@ import CardContent from "@material-ui/core/CardContent";
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import Alert from "@material-ui/lab/Alert";
-import moment from "moment";
 import React, { useEffect, useState } from "react";
 import directMeetingApi from "../../../../api/directMeetingApi";
 import AddingCoachingService from "../../components/AddingCoachingService";
+import ConfirmDeleteService from "../../components/ConfirmDeleteService";
+import EditCoachingStatusForm from "../../components/EditCoachingStatusForm";
 import NoteSearchFree from "../../components/NoteSearchFree";
-
+import moment from "moment";
 const useStyles = makeStyles((theme) => ({
 	root: {
 		minWidth: 275,
@@ -28,6 +29,9 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: 5,
 	},
 }));
+
+const date = new Date();
+
 const DirectMeeting = () => {
 	const classes = useStyles();
 
@@ -40,8 +44,9 @@ const DirectMeeting = () => {
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [email, setEmail] = useState("");
 	const [coacher, setCoacher] = useState("");
-	const [time, setTime] = useState("");
+	const [time, setTime] = useState(date);
 	const [address, setAddress] = useState("");
+	const [birthDay, setBirthDay] = useState(date);
 
 	const [listDirectMeet, setListDirectMeet] = useState([]);
 	const [listCoacher, setListCoacher] = useState([]);
@@ -52,11 +57,15 @@ const DirectMeeting = () => {
 	const [clickedIdChangeForm, setClickedIdChangeForm] = useState("");
 	const [newNote, setNewNote] = useState("");
 
+	const [clickedDeleteId, setClickedDeleteId] = useState("");
+	const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
+
 	// get list direct meet
 	useEffect(() => {
 		const fetchListDirectMeet = async () => {
 			try {
 				const response = await directMeetingApi.getListDirectMeet();
+				console.log(response.data);
 				setListDirectMeet(response.data);
 			} catch (error) {
 				console.log("failed to fetch product list: ", error);
@@ -96,15 +105,16 @@ const DirectMeeting = () => {
 		setClickedIdChangeForm(id);
 	};
 
-	// handle adding new service
+	// handle adding new coaching
 	const handleAddingCoachingSubmit = () => {
 		const useInfo = {
 			name: name,
 			phoneNumber: phoneNumber,
 			email: email,
 			coacher: coacher,
-			time: time,
+			time: moment(time).format("YYYY-MM-DD"),
 			address: address,
+			birthDay: moment(birthDay).format("YYYY-MM-DD"),
 		};
 
 		const fetchAddCoaching = () => {
@@ -121,7 +131,6 @@ const DirectMeeting = () => {
 				.catch(function (error) {
 					setError(true);
 					setTimeout(() => {
-						setOpenAddingCoaching(false);
 						setError(false);
 					}, 1500);
 				});
@@ -165,6 +174,90 @@ const DirectMeeting = () => {
 		}
 	};
 
+	const handleOpenDeleteConfirm = (id) => {
+		console.log(id);
+		setClickedDeleteId(id);
+		setOpenDeleteConfirm(true);
+	};
+
+	const handleCloseDeleteConfirm = (id) => {
+		setOpenDeleteConfirm(false);
+	};
+
+	// handle click confirm delete coaching service
+	const handleClickDeleteConfirm = (id) => {
+		directMeetingApi
+			.deleteCoaching(id)
+			.then(function (response) {
+				setSuccess(true);
+
+				setTimeout(() => {
+					setIsDataChanged(true);
+					setOpenDeleteConfirm(false);
+					setSuccess(false);
+				}, 1500);
+			})
+			.catch(function (error) {
+				setError(true);
+				setTimeout(() => {
+					setOpenDeleteConfirm(false);
+					setIsDataChanged(true);
+
+					setError(false);
+				}, 1500);
+			});
+
+		setIsDataChanged(false);
+	};
+
+	const [isOpenEditStatus, setIsOpenEditStatus] = useState(false);
+	const [clickedEdit, setClickedEdit] = useState("");
+
+	const handleOpenEditStatus = (id) => {
+		setIsOpenEditStatus(true);
+		setClickedEdit(id);
+	};
+
+	const handleCloseEditStatus = () => {
+		setIsOpenEditStatus(false);
+	};
+
+	const handleEditStatusSubmit = (status, id) => {
+		if (id && status) {
+			const dataEditStatus = {
+				status: status,
+			};
+
+			const fetchEditStatus = async () => {
+				try {
+					await directMeetingApi.patchEditStatus(id, dataEditStatus);
+					setSuccess(true);
+
+					setTimeout(() => {
+						setIsOpenEditStatus(false);
+						setSuccess(false);
+						setIsDataChanged(true);
+					}, 1500);
+				} catch (error) {
+					setError(true);
+					setTimeout(() => {
+						setIsOpenEditStatus(false);
+						setError(false);
+					}, 1500);
+				}
+			};
+
+			setIsDataChanged(false);
+			fetchEditStatus();
+		} else {
+			setError(true);
+			setTimeout(() => {
+				setIsOpenEditStatus(false);
+				setError(false);
+			}, 1500);
+		}
+	};
+
 	return (
 		<React.Fragment>
 			<Grid
@@ -199,6 +292,9 @@ const DirectMeeting = () => {
 				listCoacher={listCoacher}
 				coacher={coacher}
 				onAddressChange={(e) => setAddress(e.target.value)}
+				onBirthDayChange={(e) => setBirthDay(e.target.value)}
+				birthDay={birthDay}
+				time={time}
 				onAddingCoachingSubmit={handleAddingCoachingSubmit}
 				onSuccess={success}
 				onError={error}
@@ -224,19 +320,35 @@ const DirectMeeting = () => {
 										<Typography className={classes.pos} color='textSecondary'>
 											Email: {data.email}
 										</Typography>
-										{/* <Typography className={classes.pos} color='textSecondary'>
-											Địa chỉ: {data.address}
-										</Typography> */}
+
+										{data.coacher ? (
+											<Typography className={classes.pos} color='textSecondary'>
+												Coacher: {data.coacher.name}
+											</Typography>
+										) : (
+											<Typography className={classes.pos} color='textSecondary'>
+												Coacher: {data.coacher.name}
+											</Typography>
+										)}
 										<Typography className={classes.pos} color='textSecondary'>
-											Coacher: {data.coacher.name}
+											Thời gian coaching:{" "}
+											{moment(data.time).format("DD/MM/YYYY")}
 										</Typography>
 										<Typography className={classes.pos} color='textSecondary'>
-											Thời gian coaching: {data.time}
+											Trạng thái: {data.status}{" "}
+											<Button
+												size='small'
+												color='secondary'
+												onClick={() => {
+													handleOpenEditStatus(data._id);
+												}}>
+												Sửa trạng thái
+											</Button>
 										</Typography>
 										<Typography
 											variant='body2'
 											component='p'
-											style={{ color: "#d500f9" }}>
+											style={{ color: "rgb(36, 51, 65)" }}>
 											Note: {data.note}{" "}
 										</Typography>
 									</CardContent>
@@ -248,8 +360,24 @@ const DirectMeeting = () => {
 											onClick={(e) => {
 												handleOpenEditNote(data._id);
 											}}>
-											note
+											Thêm note
 										</Button>
+
+										{/* edit status */}
+										{data._id === clickedEdit && (
+											<EditCoachingStatusForm
+												idBookedCoaching={data._id}
+												isOpen={isOpenEditStatus}
+												onCloseForm={handleCloseEditStatus}
+												value={data.status}
+												// onStatusChange={(e) => setStatusChange(e.target.value)}
+												onEditStatusSubmit={handleEditStatusSubmit}
+												onSuccess={success}
+												onError={error}
+											/>
+										)}
+
+										{/* edit note */}
 										{data._id === clickedIdChangeForm ? (
 											<NoteSearchFree
 												nameUserChange={data.name}
@@ -261,6 +389,31 @@ const DirectMeeting = () => {
 												onSuccess={success}
 												onError={error}
 												currentNote={data.note}
+											/>
+										) : (
+											""
+										)}
+
+										<Button
+											size='small'
+											variant='contained'
+											color='secondary'
+											onClick={() => {
+												handleOpenDeleteConfirm(data._id);
+											}}>
+											Xóa
+										</Button>
+
+										{clickedDeleteId === data._id ? (
+											<ConfirmDeleteService
+												isOpenDeleteConfirm={openDeleteConfirm}
+												onConfirmDeleteClose={handleCloseDeleteConfirm}
+												onClickConfirmDeleteService={(e) => {
+													handleClickDeleteConfirm(data._id);
+												}}
+												onSuccess={success}
+												onError={error}
+												id={data._id}
 											/>
 										) : (
 											""

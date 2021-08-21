@@ -1,4 +1,4 @@
-import { TableHead, Typography, Tooltip } from "@material-ui/core";
+import { TableHead, Tooltip, Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -13,11 +13,13 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
+import NoteAddOutlinedIcon from "@material-ui/icons/NoteAddOutlined";
+import Alert from "@material-ui/lab/Alert";
 import moment from "moment";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import NoteAddOutlinedIcon from "@material-ui/icons/NoteAddOutlined";
 import listSearchFreeApi from "../../../../api/listSearchFreeApi";
+import SearchTerm from "../../../../components/Search";
 import NoteSearchFree from "../../components/NoteSearchFree";
 
 const useStyles1 = makeStyles((theme) => ({
@@ -53,15 +55,13 @@ function TablePaginationActions(props) {
 			<IconButton
 				onClick={handleFirstPageButtonClick}
 				disabled={page === 0}
-				aria-label='first page'
-			>
+				aria-label='first page'>
 				{theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
 			</IconButton>
 			<IconButton
 				onClick={handleBackButtonClick}
 				disabled={page === 0}
-				aria-label='previous page'
-			>
+				aria-label='previous page'>
 				{theme.direction === "rtl" ? (
 					<KeyboardArrowRight />
 				) : (
@@ -71,8 +71,7 @@ function TablePaginationActions(props) {
 			<IconButton
 				onClick={handleNextButtonClick}
 				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-				aria-label='next page'
-			>
+				aria-label='next page'>
 				{theme.direction === "rtl" ? (
 					<KeyboardArrowLeft />
 				) : (
@@ -82,8 +81,7 @@ function TablePaginationActions(props) {
 			<IconButton
 				onClick={handleLastPageButtonClick}
 				disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-				aria-label='last page'
-			>
+				aria-label='last page'>
 				{theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
 			</IconButton>
 		</div>
@@ -139,6 +137,7 @@ export default function CustomPaginationActionsTable() {
 		setPage(0);
 	};
 
+	// get list free service
 	useEffect(() => {
 		const fetchGetListSearchFree = async () => {
 			try {
@@ -187,14 +186,39 @@ export default function CustomPaginationActionsTable() {
 		}
 	};
 
+	function handleFiltersChange(newFilters) {
+		let arrayFiltered = [];
+
+		const lowerCasedFilter = newFilters.searchTerm.toLowerCase();
+
+		if (lowerCasedFilter) {
+			// setIsRowsChanges(!isRowsChanges);
+
+			rows.filter((item) => {
+				const nameFiltered = item.name.toLowerCase().includes(lowerCasedFilter);
+				if (nameFiltered) {
+					arrayFiltered.push(item);
+				}
+			});
+
+			setRows(arrayFiltered);
+		} else {
+			setIsRowsChanges(!isRowsChanges);
+		}
+	}
+
 	return (
 		<React.Fragment>
 			<Typography variant='h5' style={{ marginBottom: "1rem" }}>
 				Danh sách tra cứu miễn phí
 			</Typography>
 			<TableContainer component={Paper}>
+				<SearchTerm
+					onSubmit={handleFiltersChange}
+					handleReload={() => setIsRowsChanges(!isRowsChanges)}
+				/>
 				<Table className={classes.table} aria-label='custom pagination table'>
-					<TableHead>
+					<TableHead style={{ backgroundColor: "#bdc3c7" }}>
 						<TableRow>
 							<TableCell>ID</TableCell>
 							<TableCell>Tên</TableCell>
@@ -231,8 +255,7 @@ export default function CustomPaginationActionsTable() {
 										<IconButton
 											aria-label='deposit'
 											type='button'
-											onClick={() => handleChangeNoteOpen(row._id)}
-										>
+											onClick={() => handleChangeNoteOpen(row._id)}>
 											<NoteAddOutlinedIcon color='secondary' />
 										</IconButton>
 									</Tooltip>
@@ -257,7 +280,7 @@ export default function CustomPaginationActionsTable() {
 
 						{emptyRows > 0 && (
 							<TableRow style={{ height: 53 * emptyRows }}>
-								<TableCell colSpan={6} />
+								<TableCell colSpan={6}></TableCell>
 							</TableRow>
 						)}
 					</TableBody>

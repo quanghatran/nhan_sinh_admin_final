@@ -14,6 +14,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
 import Alert from "@material-ui/lab/Alert";
 import React from "react";
+import DatePicker from "../../../../components/controls/DatePicker";
 
 const useStyles = makeStyles((theme) => ({
 	modal: {
@@ -47,7 +48,10 @@ const AddingCoachingService = (props) => {
 		listCoacher,
 		coacher,
 		onCoacherChange,
+		onBirthDayChange,
 		onAddingCoachingSubmit,
+		birthDay,
+		time,
 		onSuccess,
 		onError,
 	} = props;
@@ -87,6 +91,26 @@ const AddingCoachingService = (props) => {
 									type='text'
 									onChange={onNameChange}
 								/>
+								{/* <TextField
+									className={classes.field}
+									label='Ngày sinh'
+									variant='outlined'
+									color='secondary'
+									fullWidth
+									type='text'
+									onChange={onBirthDayChange}
+								/> */}
+								<DatePicker
+									label='Ngày sinh'
+									className={classes.field}
+									variant='outlined'
+									color='primary'
+									name='birthDay'
+									fullWidth
+									value={birthDay}
+									onChange={onBirthDayChange}
+								/>
+
 								<TextField
 									className={classes.field}
 									label='Số Điện Thoại'
@@ -120,26 +144,24 @@ const AddingCoachingService = (props) => {
 										value={coacher}
 										onChange={onCoacherChange}
 										label='Coacher'>
-										{listCoacher.length > 0 ? (
-											listCoacher.map((coacher) => (
-												<MenuItem key={coacher._id} value={coacher._id}>
-													{coacher.name}
-												</MenuItem>
-											))
-										) : (
-											<MenuItem value=''>NULL</MenuItem>
-										)}
+										{listCoacher.length > 0
+											? listCoacher.map((coacher) => (
+													<MenuItem key={coacher._id} value={coacher._id}>
+														{coacher.name}
+													</MenuItem>
+											  ))
+											: ""}
 									</Select>
 								</FormControl>
 
-								<TextField
-									className={classes.field}
+								<DatePicker
 									label='Thời gian coaching'
+									className={classes.field}
 									variant='outlined'
-									color='secondary'
+									color='primary'
 									fullWidth
-									type='text'
 									style={{ marginBottom: "1rem" }}
+									value={time}
 									onChange={onTimeChange}
 								/>
 

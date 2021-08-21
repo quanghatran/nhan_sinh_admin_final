@@ -17,10 +17,12 @@ import FirstPageIcon from "@material-ui/icons/FirstPage";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
 import LastPageIcon from "@material-ui/icons/LastPage";
+import moment from "moment";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import customerApi from "../../../../api/customerApi";
 import ConfirmDialog from "../../../../components/ConfirmDialog";
+import SearchTerm from "../../../../components/Search";
 import AddingSlotVip from "../../components/AddingSlotVip";
 import DepositUserForm from "../../components/DepositUserForm";
 import ListServiceBought from "../../components/ListServiceBought";
@@ -181,6 +183,7 @@ export default function CustomPaginationActionsTable() {
 		const fetchGetListUsers = async () => {
 			try {
 				const response = await customerApi.getListUsers();
+				console.log(response.data);
 				setRows(response.data);
 			} catch (error) {
 				// console.log("failed to fetch product list: ", error);
@@ -353,14 +356,39 @@ export default function CustomPaginationActionsTable() {
 		}
 	};
 
+	function handleFiltersChange(newFilters) {
+		let arrayFiltered = [];
+
+		const lowerCasedFilter = newFilters.searchTerm.toLowerCase();
+
+		if (lowerCasedFilter) {
+			// setIsRowsChanges(!isRowsChanges);
+
+			rows.filter((item) => {
+				const nameFiltered = item.name.toLowerCase().includes(lowerCasedFilter);
+				if (nameFiltered) {
+					arrayFiltered.push(item);
+				}
+			});
+
+			setRows(arrayFiltered);
+		} else {
+			setIsListChanged(!isListChanged);
+		}
+	}
+
 	return (
 		<React.Fragment>
 			<Typography variant='h5' style={{ marginBottom: "1rem" }}>
 				Danh sách users
 			</Typography>
 			<TableContainer component={Paper}>
+				<SearchTerm
+					onSubmit={handleFiltersChange}
+					handleReload={() => setIsListChanged(!isListChanged)}
+				/>
 				<Table className={classes.table} aria-label='custom pagination table'>
-					<TableHead>
+					<TableHead style={{ backgroundColor: "#bdc3c7" }}>
 						<TableRow>
 							<TableCell>ID </TableCell>
 							<TableCell>SĐT</TableCell>
@@ -429,6 +457,9 @@ export default function CustomPaginationActionsTable() {
 													<AddShoppingCartOutlinedIcon color='secondary' />
 												</IconButton>
 											</Tooltip>
+										</Grid>
+										<Grid item xs={12}>
+											expire: {moment(row.expirySlotVIP).format("DD/MM/YYYY")}
 										</Grid>
 									</Grid>
 									{row._id === clickedOpenAddingSlotVip ? (

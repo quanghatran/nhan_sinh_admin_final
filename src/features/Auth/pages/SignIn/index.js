@@ -1,19 +1,18 @@
-import satsi_logo from "../../../../assets/images/logo_footer.png";
+import { Avatar, Container, CssBaseline, Typography } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
+import Alert from "@material-ui/lab/Alert";
+import { unwrapResult } from "@reduxjs/toolkit";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { useState } from "react";
-import { addUser } from "./signInSlice";
 import userApi from "../../../../api/userApi";
-import { getMe, signIn } from "../../../../app/userSlice";
-import { Avatar, Container, CssBaseline, Typography } from "@material-ui/core";
-import { unwrapResult } from "@reduxjs/toolkit";
-import Alert from "@material-ui/lab/Alert";
-import React from "react";
-
+import { getMe } from "../../../../app/userSlice";
+import satsi_logo from "../../../../assets/images/logo_footer.png";
 import "./SignIn.css";
+import { addUser } from "./signInSlice";
+
 const useStyles = makeStyles((theme) => ({
 	paper: {
 		display: "flex",
@@ -56,16 +55,11 @@ const SignIn = () => {
 				userApi
 					.signIn(dataSignIn)
 					.then(function (response) {
-						console.log(1);
-						console.log(response);
 						localStorage.setItem("token", response.data.token);
 
 						setTimeout(() => {
-							console.log("response.data: ", response.data);
 							const dispatchUser = dispatch(addUser(response.data));
 							const currentUser = unwrapResult(dispatchUser);
-
-							console.log("currentUser: ", currentUser);
 
 							// dispatch getMe to redux
 							dispatch(getMe(response.data));
@@ -74,12 +68,10 @@ const SignIn = () => {
 						}, 1000);
 					})
 					.catch(function (error) {
-						console.log(error);
-						console.log(2);
+						setSignInError(true);
 						setTimeout(() => {
-							setSignInError(true);
+							setSignInError(false);
 						}, 2000);
-						setSignInError(false);
 					});
 			} catch (error) {
 				console.log("failed to fetch product list: ", error);

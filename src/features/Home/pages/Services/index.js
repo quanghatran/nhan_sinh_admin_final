@@ -149,7 +149,6 @@ const Services = () => {
 	};
 
 	const handleOpenDeleteConfirm = (id) => {
-		console.log(id);
 		setClickedDeleteId(id);
 		setOpenDeleteConfirm(true);
 	};
@@ -188,8 +187,7 @@ const Services = () => {
 		<React.Fragment>
 			<Grid
 				container
-				style={{ justifyContent: "space-between", marginBottom: "1rem" }}
-			>
+				style={{ justifyContent: "space-between", marginBottom: "1rem" }}>
 				<Grid item>
 					<Typography variant='h5'>Danh sách các dịch vụ</Typography>
 				</Grid>
@@ -199,8 +197,7 @@ const Services = () => {
 						variant='contained'
 						color='primary'
 						onClick={handleOpenAddingServiceForm}
-						startIcon={<AddIcon />}
-					>
+						startIcon={<AddIcon />}>
 						Thêm dịch vụ
 					</Button>
 				</Grid>
@@ -241,8 +238,7 @@ const Services = () => {
 										color='secondary'
 										onClick={() => {
 											handleOpenDeleteConfirm(data._id);
-										}}
-									>
+										}}>
 										Xóa dịch vụ
 									</Button>
 									{clickedDeleteId === data._id ? (
@@ -266,8 +262,7 @@ const Services = () => {
 										color='primary'
 										onClick={(e) => {
 											handleOpenEditForm(data._id);
-										}}
-									>
+										}}>
 										Chỉnh sửa
 									</Button>
 									{clickedEditingId === data._id ? (

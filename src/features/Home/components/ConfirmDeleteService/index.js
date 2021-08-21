@@ -13,8 +13,7 @@ function PaperComponent(props) {
 	return (
 		<Draggable
 			handle='#draggable-dialog-title'
-			cancel={'[class*="MuiDialogContent-root"]'}
-		>
+			cancel={'[class*="MuiDialogContent-root"]'}>
 			<Paper {...props} />
 		</Draggable>
 	);
@@ -39,8 +38,7 @@ export default function ConfirmDeleteService(props) {
 			open={isOpenDeleteConfirm}
 			onClose={onConfirmDeleteClose}
 			PaperComponent={PaperComponent}
-			aria-labelledby='draggable-dialog-title'
-		>
+			aria-labelledby='draggable-dialog-title'>
 			<DialogTitle style={{ cursor: "move" }} id='draggable-dialog-title'>
 				Xác nhận
 			</DialogTitle>
@@ -50,8 +48,7 @@ export default function ConfirmDeleteService(props) {
 					<Alert
 						variant='filled'
 						severity='success'
-						style={{ marginTop: "1rem", justifyContent: "center" }}
-					>
+						style={{ marginTop: "1rem", justifyContent: "center" }}>
 						Xóa dịch vụ thành công
 					</Alert>
 				)}
@@ -59,8 +56,7 @@ export default function ConfirmDeleteService(props) {
 					<Alert
 						variant='filled'
 						severity='error'
-						style={{ marginTop: "1rem", justifyContent: "center" }}
-					>
+						style={{ marginTop: "1rem", justifyContent: "center" }}>
 						Xóa dịch vụ không thành công
 					</Alert>
 				)}
@@ -70,8 +66,7 @@ export default function ConfirmDeleteService(props) {
 					autoFocus
 					onClick={onConfirmDeleteClose}
 					color='secondary'
-					variant='contained'
-				>
+					variant='contained'>
 					Hủy
 				</Button>
 				<Button
@@ -80,8 +75,7 @@ export default function ConfirmDeleteService(props) {
 					}}
 					color='primary'
 					variant='contained'
-					type='button'
-				>
+					type='button'>
 					Xác nhận
 				</Button>
 			</DialogActions>
