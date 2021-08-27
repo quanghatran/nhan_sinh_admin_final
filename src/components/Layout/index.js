@@ -1,34 +1,30 @@
-import {
-	CssBaseline,
-	Divider,
-	Hidden,
-	IconButton,
-	Tooltip,
-} from "@material-ui/core";
+import { CssBaseline, Hidden, IconButton, Tooltip } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
-import Avatar from "@material-ui/core/Avatar";
-import { deepPurple } from "@material-ui/core/colors";
+import Badge from "@material-ui/core/Badge";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { ExitToApp, SubjectOutlined } from "@material-ui/icons";
+import DirectionsBikeOutlinedIcon from "@material-ui/icons/DirectionsBikeOutlined";
 import DnsOutlinedIcon from "@material-ui/icons/DnsOutlined";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
-import PeopleOutlinedIcon from "@material-ui/icons/PeopleOutlined";
-import React from "react";
-import { useHistory, useLocation } from "react-router-dom";
-import logoSatsi from "../../assets/images/logo_satsi.png";
-import logoSatsi1 from "../../assets/images/logo_footer.png";
-import DirectionsBikeOutlinedIcon from "@material-ui/icons/DirectionsBikeOutlined";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
+import NotificationsActiveOutlinedIcon from "@material-ui/icons/NotificationsActiveOutlined";
+import PeopleOutlinedIcon from "@material-ui/icons/PeopleOutlined";
+import PermContactCalendarOutlinedIcon from "@material-ui/icons/PermContactCalendarOutlined";
 import moment from "moment";
-
+import React, { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import userApi from "../../api/userApi";
+import logoSatsi from "../../assets/images/logo_satsi.png";
+import ListNotify from "../ListNotify";
 import "./Layout.css";
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => {
@@ -85,6 +81,10 @@ const useStyles = makeStyles((theme) => {
 			flexGrow: 1,
 			padding: theme.spacing(3),
 		},
+
+		wrapperNotify: {
+			position: "relative",
+		},
 	};
 });
 
@@ -113,10 +113,11 @@ export default function Layout({ children }) {
 			path: "/users",
 		},
 		{
-			text: "Voucher Free",
-			icon: <SubjectOutlined color='primary' />,
-			path: "/list-search-free",
+			text: "Coachers",
+			icon: <PermContactCalendarOutlinedIcon color='primary' />,
+			path: "/coachers",
 		},
+
 		{
 			text: "Coaching",
 			icon: <DirectionsBikeOutlinedIcon color='primary' />,
@@ -126,6 +127,11 @@ export default function Layout({ children }) {
 			text: "Services",
 			icon: <DnsOutlinedIcon color='primary' />,
 			path: "/services",
+		},
+		{
+			text: "Voucher Free",
+			icon: <SubjectOutlined color='primary' />,
+			path: "/list-search-free",
 		},
 	];
 	const handleLogout = () => {
@@ -165,6 +171,35 @@ export default function Layout({ children }) {
 		</div>
 	);
 
+	const [reload, setReload] = useState(false);
+	const [listNotify, setListNotify] = useState([]);
+	const [isOpen, setIsOpen] = useState(false);
+
+	// setInterval(function () {
+	// 	setReload(!reload);
+	// }, 3000);
+
+	// get notify three days
+	useEffect(() => {
+		const fetchListCoachers = async () => {
+			try {
+				const interval = setInterval(async () => {
+					const response = await userApi.getNotify();
+					setListNotify(response.data);
+				}, 300000);
+
+				return () => clearInterval(interval);
+			} catch (error) {
+				console.log("failed to fetch product list: ", error);
+			}
+		};
+		fetchListCoachers();
+	}, []);
+
+	const handleShowNotification = () => {
+		setIsOpen(!isOpen);
+	};
+
 	return (
 		<div className={classes.root}>
 			<CssBaseline />
@@ -182,8 +217,22 @@ export default function Layout({ children }) {
 					<Typography className={classes.date}>
 						{moment(new Date()).format("DD/MM/YYYY")}
 					</Typography>
-					{/* <Typography>Admin</Typography> */}
-					{/* <Avatar alt='admin' src={logoSatsi1} /> */}
+
+					{/* {listNotify.length > 0 } */}
+					<div className={classes.wrapperNotify}>
+						<IconButton
+							style={{ marginRight: "2rem", color: "#fff" }}
+							variant='contained'
+							onClick={handleShowNotification}>
+							<Badge badgeContent={listNotify.length} color='secondary'>
+								<NotificationsActiveOutlinedIcon />
+							</Badge>
+						</IconButton>
+						{listNotify.length > 0 && (
+							<ListNotify listNotify={listNotify} isOpen={isOpen} />
+						)}
+					</div>
+
 					<Tooltip title='Đăng Xuất'>
 						<IconButton
 							variant='contained'

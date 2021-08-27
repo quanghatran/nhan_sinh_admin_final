@@ -1,5 +1,4 @@
 import { ThemeProvider } from "@material-ui/core";
-// import { createTheme } from "@material-ui/core/styles";
 import { purple } from "@material-ui/core/colors";
 import React, { Suspense } from "react";
 import { createTheme } from "@material-ui/core/styles";
@@ -23,6 +22,7 @@ const ListSearchFree = React.lazy(() =>
 	import("./features/Home/pages/ListSearchFree")
 );
 const Services = React.lazy(() => import("./features/Home/pages/Services"));
+const Coachers = React.lazy(() => import("./features/Home/pages/Coachers"));
 
 const theme = createTheme({
 	palette: {
@@ -62,14 +62,15 @@ function App() {
 								component={ListSearchFree}
 							/>
 							<PrivateRoute exact path='/services' component={Services} />
+							<PrivateRoute exact path='/coachers' component={Coachers} />
 							<PrivateRoute
 								exact
 								path='/direct-meeting'
 								component={DirectMeeting}
 							/>
 						</Layout>
+						{/* <PrivateRoute path='*' component={NotFound} /> */}
 						<Redirect from='/' to='/sign-in' />
-						{/* <Route path='*' component={NotFound} /> */}
 					</Switch>
 				</Router>
 			</ThemeProvider>

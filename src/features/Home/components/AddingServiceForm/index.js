@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),
 	},
+	field: {
+		marginBottom: "1rem",
+	},
 }));
 
 const AddingServiceForm = (props) => {
@@ -29,21 +32,16 @@ const AddingServiceForm = (props) => {
 	const {
 		isAddingServiceOpen,
 		onCloseForm,
-		onNameServiceChange,
-		onPriceServiceChange,
-		onSlotServiceChange,
+		valuesService,
+		onValuesServiceChange,
 		onAddingServiceSubmit,
 		onSuccess,
 		onError,
-		id,
-		nameService,
-		price,
-		quantity,
 	} = props;
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		onAddingServiceSubmit();
+		onAddingServiceSubmit(valuesService);
 	};
 
 	return (
@@ -58,8 +56,7 @@ const AddingServiceForm = (props) => {
 				BackdropComponent={Backdrop}
 				BackdropProps={{
 					timeout: 500,
-				}}
-			>
+				}}>
 				<Fade in={isAddingServiceOpen}>
 					<div className={classes.paper}>
 						<Container size='sm'>
@@ -75,22 +72,21 @@ const AddingServiceForm = (props) => {
 									color='secondary'
 									fullWidth
 									type='text'
-									style={{ marginBottom: "1rem" }}
-									onChange={onNameServiceChange}
+									onChange={onValuesServiceChange}
 									required={true}
-									defaultValue={nameService}
+									name='title'
 								/>
 								<TextField
 									className={classes.field}
 									label='Giá'
+									placeholder='VNĐ'
 									variant='outlined'
 									color='secondary'
 									fullWidth
 									type='number'
-									style={{ marginBottom: "1rem" }}
-									onChange={onPriceServiceChange}
+									onChange={onValuesServiceChange}
 									required={true}
-									defaultValue={price}
+									name='price'
 								/>
 								<TextField
 									className={classes.field}
@@ -99,25 +95,22 @@ const AddingServiceForm = (props) => {
 									color='secondary'
 									fullWidth
 									type='number'
-									style={{ marginBottom: "1rem" }}
-									onChange={onSlotServiceChange}
+									onChange={onValuesServiceChange}
 									required={true}
-									defaultValue={quantity}
+									name='quantity'
 								/>
 
 								<Button
 									color='secondary'
 									variant='contained'
-									onClick={onCloseForm}
-								>
+									onClick={onCloseForm}>
 									Hủy bỏ
 								</Button>
 								<Button
 									style={{ float: "right" }}
 									type='submit'
 									color='primary'
-									variant='contained'
-								>
+									variant='contained'>
 									Xác nhận
 								</Button>
 							</form>
@@ -125,8 +118,7 @@ const AddingServiceForm = (props) => {
 								<Alert
 									variant='filled'
 									severity='success'
-									style={{ marginTop: "1rem", justifyContent: "center" }}
-								>
+									style={{ marginTop: "1rem", justifyContent: "center" }}>
 									Thêm mới dịch vụ thành công
 								</Alert>
 							)}
@@ -134,8 +126,7 @@ const AddingServiceForm = (props) => {
 								<Alert
 									variant='filled'
 									severity='error'
-									style={{ marginTop: "1rem", justifyContent: "center" }}
-								>
+									style={{ marginTop: "1rem", justifyContent: "center" }}>
 									Thêm mới dịch vụ thất bại
 								</Alert>
 							)}

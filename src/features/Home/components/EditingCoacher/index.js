@@ -2,19 +2,15 @@ import {
 	Button,
 	Container,
 	Fade,
-	FormControl,
-	InputLabel,
-	MenuItem,
 	Modal,
-	Select,
 	TextField,
 	Typography,
 } from "@material-ui/core";
 import Backdrop from "@material-ui/core/Backdrop";
 import { makeStyles } from "@material-ui/core/styles";
 import Alert from "@material-ui/lab/Alert";
-import React from "react";
-import DatePicker from "../../../../components/controls/DatePicker";
+import React, { useState, useEffect } from "react";
+import coacherApi from "../../../../api/coacherApi";
 
 const useStyles = makeStyles((theme) => ({
 	modal: {
@@ -31,32 +27,60 @@ const useStyles = makeStyles((theme) => ({
 	field: {
 		marginBottom: "1rem",
 	},
+	img: {
+		marginLeft: "auto",
+		marginRight: "auto",
+		width: "100px",
+		height: "100px",
+		objectFit: "cover",
+		marginBottom: "1rem",
+		borderRadius: "12px",
+		boxShadow: ".25rem .25rem 1rem rgba(0,0,0,.3)",
+	},
+	input: {
+		position: "absolute",
+		left: "0px",
+		cursor: "pointer",
+		opacity: 0,
+		overFlow: "hidden",
+	},
 }));
 
-const AddingCoachingService = (props) => {
+const EditingCoacher = (props) => {
 	const classes = useStyles();
+
 	const {
-		isOpen,
+		isEditingCoacherOpen,
 		onCloseForm,
-		onNameChange,
-		onEmailChange,
-		onTimeChange,
-		onPhoneNumberChange,
-		onAddressChange,
-		listCoacher,
-		coacher,
-		onCoacherChange,
-		onBirthDayChange,
-		onAddingCoachingSubmit,
-		birthDay,
-		time,
+		coacherInfo,
+		coacherId,
+		onEditingCoacherSubmit,
+		onCoacherInfoChange,
 		onSuccess,
 		onError,
 	} = props;
 
+	// const [picture, setPicture] = useState(coacherInfo.avatar);
+	// const [imgData, setImgData] = useState(coacherInfo.avatar);
+
+	// const onChangePicture = (e) => {
+	// 	if (e.target.files[0]) {
+	// 		setPicture(e.target.files[0]);
+	// 		const reader = new FileReader();
+	// 		reader.addEventListener("load", () => {
+	// 			setImgData(reader.result);
+	// 		});
+	// 		reader.readAsDataURL(e.target.files[0]);
+	// 	}
+	// };
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		onAddingCoachingSubmit();
+
+		// var dataAdd = coacherInfo;
+		// dataAdd.avatar = picture;
+
+		onEditingCoacherSubmit(coacherId, coacherInfo);
 	};
 
 	return (
@@ -65,50 +89,58 @@ const AddingCoachingService = (props) => {
 				aria-labelledby='transition-modal-title'
 				aria-describedby='transition-modal-description'
 				className={classes.modal}
-				open={isOpen}
+				open={isEditingCoacherOpen}
 				onClose={onCloseForm}
 				closeAfterTransition
 				BackdropComponent={Backdrop}
 				BackdropProps={{
 					timeout: 500,
 				}}>
-				<Fade in={isOpen}>
+				<Fade in={isEditingCoacherOpen}>
 					<div className={classes.paper}>
 						<Container size='sm'>
 							<Typography variant='h5' style={{ marginBottom: "1rem" }}>
-								Thêm lịch đặt coaching
+								Sửa thông tin coacher
 							</Typography>
 
-							<form autoComplete='off' onSubmit={handleSubmit}>
+							<form
+								autoComplete='off'
+								onSubmit={handleSubmit}
+								encType='multipart/form-data'>
+								{/* <Button
+									variant='contained'
+									color='primary'
+									style={{ position: "relative", cursor: "pointer" }}
+									className={classes.field}>
+									Chọn avatar
+									<input
+										name='avatar'
+										id='profilePic'
+										type='file'
+										className={classes.input}
+										onChange={onChangePicture}
+									/>
+								</Button> */}
+								{/* {imgData && ( */}
+								{/* <div className='previewProfilePic'>
+									<img
+										className='playerProfilePic_home_tile'
+										src={imgData}
+										className={classes.img}
+									/>
+								</div> */}
+								{/* )} */}
 								<TextField
 									className={classes.field}
-									label='Họ Tên Người Đặt Lịch'
+									label='Họ Tên Coacher'
 									variant='outlined'
 									color='secondary'
 									fullWidth
 									type='text'
-									onChange={onNameChange}
+									name='name'
+									value={coacherInfo.name}
+									onChange={onCoacherInfoChange}
 								/>
-								{/* <TextField
-									className={classes.field}
-									label='Ngày sinh'
-									variant='outlined'
-									color='secondary'
-									fullWidth
-									type='text'
-									onChange={onBirthDayChange}
-								/> */}
-								<DatePicker
-									label='Ngày sinh'
-									className={classes.field}
-									variant='outlined'
-									color='primary'
-									name='birthDay'
-									fullWidth
-									value={birthDay}
-									onChange={onBirthDayChange}
-								/>
-
 								<TextField
 									className={classes.field}
 									label='Số Điện Thoại'
@@ -116,7 +148,9 @@ const AddingCoachingService = (props) => {
 									color='secondary'
 									fullWidth
 									type='number'
-									onChange={onPhoneNumberChange}
+									name='phone'
+									value={coacherInfo.phone}
+									onChange={onCoacherInfoChange}
 								/>
 								<TextField
 									className={classes.field}
@@ -125,53 +159,36 @@ const AddingCoachingService = (props) => {
 									color='secondary'
 									fullWidth
 									type='email'
-									onChange={onEmailChange}
-								/>
-
-								<FormControl
-									variant='outlined'
-									className={classes.field}
-									fullWidth>
-									<InputLabel id='demo-simple-select-outlined-label'>
-										Coacher
-									</InputLabel>
-									<Select
-										labelId='demo-simple-select-outlined-label'
-										id='demo-simple-select-outlined'
-										defaultValue=''
-										value={coacher}
-										onChange={onCoacherChange}
-										label='Coacher'>
-										{listCoacher.length > 0
-											? listCoacher.map((coacher) => (
-													<MenuItem key={coacher._id} value={coacher._id}>
-														{coacher.name}
-													</MenuItem>
-											  ))
-											: ""}
-									</Select>
-								</FormControl>
-
-								<DatePicker
-									label='Thời gian coaching'
-									className={classes.field}
-									variant='outlined'
-									color='primary'
-									fullWidth
-									style={{ marginBottom: "1rem" }}
-									value={time}
-									onChange={onTimeChange}
+									name='email'
+									value={coacherInfo.email}
+									onChange={onCoacherInfoChange}
 								/>
 
 								<TextField
 									className={classes.field}
-									label='Địa Chỉ'
+									label='Giá'
 									variant='outlined'
 									color='secondary'
 									fullWidth
+									type='number'
+									name='price'
+									value={coacherInfo.price}
+									onChange={onCoacherInfoChange}
+								/>
+
+								<TextField
+									className={classes.field}
+									label='Giới thiệu'
+									variant='outlined'
+									color='secondary'
+									multiline
+									rows={4}
+									fullWidth
 									type='text'
+									name='intro'
+									value={coacherInfo.intro}
 									style={{ marginBottom: "1rem" }}
-									onChange={onAddressChange}
+									onChange={onCoacherInfoChange}
 								/>
 								<Button
 									color='secondary'
@@ -192,7 +209,7 @@ const AddingCoachingService = (props) => {
 									variant='filled'
 									severity='success'
 									style={{ marginTop: "1rem", justifyContent: "center" }}>
-									Đặt lịch coaching thành công
+									Sửa thông tin thành công
 								</Alert>
 							)}
 
@@ -201,7 +218,7 @@ const AddingCoachingService = (props) => {
 									variant='filled'
 									severity='error'
 									style={{ marginTop: "1rem", justifyContent: "center" }}>
-									Đặt lịch coaching không thành công
+									Sửa thông tin không thành công
 								</Alert>
 							)}
 						</Container>
@@ -212,4 +229,4 @@ const AddingCoachingService = (props) => {
 	);
 };
 
-export default AddingCoachingService;
+export default EditingCoacher;

@@ -6,13 +6,14 @@ import CardContent from "@material-ui/core/CardContent";
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import Alert from "@material-ui/lab/Alert";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import directMeetingApi from "../../../../api/directMeetingApi";
+import SearchTerm from "../../../../components/Search";
 import AddingCoachingService from "../../components/AddingCoachingService";
 import ConfirmDeleteService from "../../components/ConfirmDeleteService";
 import EditCoachingStatusForm from "../../components/EditCoachingStatusForm";
 import NoteSearchFree from "../../components/NoteSearchFree";
-import moment from "moment";
 const useStyles = makeStyles((theme) => ({
 	root: {
 		minWidth: 275,
@@ -65,7 +66,6 @@ const DirectMeeting = () => {
 		const fetchListDirectMeet = async () => {
 			try {
 				const response = await directMeetingApi.getListDirectMeet();
-				console.log(response.data);
 				setListDirectMeet(response.data);
 			} catch (error) {
 				console.log("failed to fetch product list: ", error);
@@ -258,6 +258,27 @@ const DirectMeeting = () => {
 		}
 	};
 
+	function handleFiltersChange(newFilters) {
+		let arrayFiltered = [];
+
+		const lowerCasedFilter = newFilters.searchTerm.toLowerCase();
+
+		if (lowerCasedFilter) {
+			// setIsRowsChanges(!isRowsChanges);
+
+			listDirectMeet.filter((item) => {
+				const nameFiltered = item.name.toLowerCase().includes(lowerCasedFilter);
+				if (nameFiltered) {
+					arrayFiltered.push(item);
+				}
+			});
+
+			setListDirectMeet(arrayFiltered);
+		} else {
+			setIsDataChanged(!isDataChanged);
+		}
+	}
+
 	return (
 		<React.Fragment>
 			<Grid
@@ -300,6 +321,10 @@ const DirectMeeting = () => {
 				onError={error}
 			/>
 
+			<SearchTerm
+				onSubmit={handleFiltersChange}
+				handleReload={() => setIsDataChanged(!isDataChanged)}
+			/>
 			<div>
 				<Grid container spacing={3}>
 					{listDirectMeet.length > 0 ? (
@@ -311,23 +336,20 @@ const DirectMeeting = () => {
 											variant='h6'
 											component='h2'
 											style={{ marginBottom: "1rem" }}>
-											{data.name}
+											Khách hàng: {data.name}
 										</Typography>
 
 										<Typography className={classes.pos} color='textSecondary'>
-											SĐT: {data.phoneNumber} - Địa chỉ: {data.address}
-										</Typography>
-										<Typography className={classes.pos} color='textSecondary'>
-											Email: {data.email}
+											SĐT: {data.phoneNumber} - Email: {data.email}
 										</Typography>
 
 										{data.coacher ? (
 											<Typography className={classes.pos} color='textSecondary'>
-												Coacher: {data.coacher.name}
+												Coacher: <b>{data.coacher.name}</b>
 											</Typography>
 										) : (
 											<Typography className={classes.pos} color='textSecondary'>
-												Coacher: {data.coacher.name}
+												Coacher: NULL
 											</Typography>
 										)}
 										<Typography className={classes.pos} color='textSecondary'>
@@ -335,7 +357,7 @@ const DirectMeeting = () => {
 											{moment(data.time).format("DD/MM/YYYY")}
 										</Typography>
 										<Typography className={classes.pos} color='textSecondary'>
-											Trạng thái: {data.status}{" "}
+											Trạng thái: <b>{data.status} </b>
 											<Button
 												size='small'
 												color='secondary'
@@ -345,6 +367,11 @@ const DirectMeeting = () => {
 												Sửa trạng thái
 											</Button>
 										</Typography>
+										{data.status === "Đã gặp" && (
+											<Typography className={classes.pos} color='textSecondary'>
+												Phản hồi KH: {data.comment}
+											</Typography>
+										)}
 										<Typography
 											variant='body2'
 											component='p'

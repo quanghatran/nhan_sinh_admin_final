@@ -6,6 +6,10 @@ const userApi = {
 		const url = "/api/admin/signin";
 		return axiosAdmin.post(url, params);
 	},
+	getNotify: (params) => {
+		const url = "/api/admin/check-notify-3-days";
+		return axiosAdmin.get(url, params);
+	},
 
 	getMe: async (params) => {
 		// TODO: call api to get current user

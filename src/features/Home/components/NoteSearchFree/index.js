@@ -55,8 +55,7 @@ const NoteSearchFree = (props) => {
 			BackdropComponent={Backdrop}
 			BackdropProps={{
 				timeout: 500,
-			}}
-		>
+			}}>
 			<Fade in={isOpenForm}>
 				<div className={classes.paper}>
 					<Container size='sm'>
@@ -67,8 +66,7 @@ const NoteSearchFree = (props) => {
 									fontWeight: "bold",
 									margin: "0 5px",
 									fontStyle: "italic",
-								}}
-							>
+								}}>
 								{nameUserChange}
 							</span>
 						</Typography>
@@ -91,16 +89,14 @@ const NoteSearchFree = (props) => {
 							<Button
 								color='secondary'
 								variant='contained'
-								onClick={onCloseForm}
-							>
+								onClick={onCloseForm}>
 								Hủy
 							</Button>
 							<Button
 								style={{ float: "right" }}
 								type='submit'
 								color='primary'
-								variant='contained'
-							>
+								variant='contained'>
 								Xác nhận
 							</Button>
 						</form>
@@ -108,8 +104,7 @@ const NoteSearchFree = (props) => {
 							<Alert
 								variant='filled'
 								severity='success'
-								style={{ marginTop: "1rem", justifyContent: "center" }}
-							>
+								style={{ marginTop: "1rem", justifyContent: "center" }}>
 								Thay đổi note thành công
 							</Alert>
 						)}
@@ -117,8 +112,7 @@ const NoteSearchFree = (props) => {
 							<Alert
 								variant='filled'
 								severity='error'
-								style={{ marginTop: "1rem", justifyContent: "center" }}
-							>
+								style={{ marginTop: "1rem", justifyContent: "center" }}>
 								Thay đổi note không thành công
 							</Alert>
 						)}

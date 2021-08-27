@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import React, { useEffect, useState } from "react";
 import servicesApi from "../../../../api/servicesApi";
+import formatCash from "../../../../components/FormatMoney";
 import AddingServiceForm from "../../components/AddingServiceForm";
 import ConfirmDeleteService from "../../components/ConfirmDeleteService";
 import EditingServiceForm from "../../components/EdtingServiceForm";
@@ -34,9 +35,11 @@ const Services = () => {
 	const [openAddingServiceForm, setOpenAddingServiceForm] = useState(false);
 	const [openEditingServiceForm, setOpenEditingServiceForm] = useState(true);
 
-	const [nameService, setNameService] = useState("");
-	const [priceService, setPriceService] = useState("");
-	const [slotService, setSlotService] = useState("");
+	const [valuesService, setValuesService] = useState({
+		title: "",
+		price: "",
+		quantity: "",
+	});
 
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState(false);
@@ -63,6 +66,20 @@ const Services = () => {
 		fetchListServices();
 	}, [isDataChanged]);
 
+	// get info service byID
+	useEffect(() => {
+		const fetchListServices = async () => {
+			try {
+				const response = await servicesApi.getInfoServiceById(clickedEditingId);
+				setValuesService(response.data);
+			} catch (error) {
+				console.log("failed to fetch product list: ", error);
+			}
+		};
+
+		fetchListServices();
+	}, [clickedEditingId]);
+
 	const handleOpenAddingServiceForm = () => {
 		setOpenAddingServiceForm(true);
 	};
@@ -72,69 +89,64 @@ const Services = () => {
 	};
 
 	// handle adding new service
-	const handleAddingSubmit = () => {
-		const dataNewService = {
-			title: nameService,
-			price: priceService,
-			quantity: slotService,
-		};
+	const handleAddingSubmit = (value) => {
+		if (value) {
+			const data = {
+				title: value.title,
+				price: value.price,
+				quantity: value.quantity,
+			};
 
-		const fetchAddNewService = () => {
-			servicesApi
-				.addService(dataNewService)
-				.then(function (response) {
-					setSuccess(true);
+			const fetchAddNewService = () => {
+				servicesApi
+					.addService(data)
+					.then(function (response) {
+						setSuccess(true);
 
-					setTimeout(() => {
-						setIsDataChanged(true);
-						setOpenAddingServiceForm(false);
-						setSuccess(false);
-					}, 1500);
-				})
-				.catch(function (error) {
-					setError(true);
-					setTimeout(() => {
-						setOpenAddingServiceForm(false);
-						setError(false);
-					}, 1500);
-				});
-		};
+						setTimeout(() => {
+							setIsDataChanged(!isDataChanged);
+							setOpenAddingServiceForm(false);
+							setSuccess(false);
+						}, 1500);
+					})
+					.catch(function (error) {
+						setError(true);
+						setTimeout(() => {
+							setError(false);
+						}, 1500);
+					});
+			};
 
-		setIsDataChanged(false);
-		fetchAddNewService();
+			fetchAddNewService();
+		}
 	};
 
 	// handle editing existing services
-	const handleEditingSubmit = (id) => {
-		const dataNewService = {
-			title: nameService,
-			price: priceService,
-			quantity: slotService,
+	const handleEditingSubmit = (id, value) => {
+		const data = {
+			title: value.title,
+			price: value.price,
+			quantity: value.quantity,
 		};
 
 		const fetchEditNewService = () => {
 			servicesApi
-				.patchService(id, dataNewService)
+				.patchService(id, data)
 				.then(function (response) {
 					setSuccess(true);
-
 					setTimeout(() => {
-						setIsDataChanged(true);
-
-						setOpenEditingServiceForm(false);
 						setSuccess(false);
+						setOpenEditingServiceForm(false);
+						setIsDataChanged(!isDataChanged);
 					}, 1500);
 				})
 				.catch(function (error) {
 					setError(true);
 					setTimeout(() => {
-						setOpenEditingServiceForm(false);
 						setError(false);
 					}, 1500);
 				});
 		};
-
-		setIsDataChanged(false);
 		fetchEditNewService();
 	};
 
@@ -183,6 +195,13 @@ const Services = () => {
 		setIsDataChanged(false);
 	};
 
+	const setValuesServiceChange = (event) => {
+		setValuesService({
+			...valuesService,
+			[event.target.name]: event.target.value,
+		});
+	};
+
 	return (
 		<React.Fragment>
 			<Grid
@@ -207,9 +226,8 @@ const Services = () => {
 			<AddingServiceForm
 				isAddingServiceOpen={openAddingServiceForm}
 				onCloseForm={handleCloseAddingServiceForm}
-				onNameServiceChange={(e) => setNameService(e.target.value)}
-				onPriceServiceChange={(e) => setPriceService(e.target.value)}
-				onSlotServiceChange={(e) => setSlotService(e.target.value)}
+				onValuesServiceChange={setValuesServiceChange}
+				valuesService={valuesService}
 				onAddingServiceSubmit={handleAddingSubmit}
 				onSuccess={success}
 				onError={error}
@@ -225,7 +243,7 @@ const Services = () => {
 										Tên dịch vụ: {data.title}
 									</Typography>
 									<Typography className={classes.pos} color='textSecondary'>
-										Giá: {data.price}
+										Giá: {formatCash("" + data.price)} VNĐ
 									</Typography>
 									<Typography variant='body2' component='p'>
 										Số lượng: {data.quantity}
@@ -269,23 +287,12 @@ const Services = () => {
 										<EditingServiceForm
 											isOpen={openEditingServiceForm}
 											onCloseForm={handleCloseEditForm}
-											onNameServiceChange={(e) =>
-												setNameService(e.target.value)
-											}
-											onPriceServiceChange={(e) =>
-												setPriceService(e.target.value)
-											}
-											onSlotServiceChange={(e) =>
-												setSlotService(e.target.value)
-											}
-											onEditingServiceSubmit={(e) => {
-												handleEditingSubmit(data._id);
-											}}
+											idService={data._id}
+											valuesService={valuesService}
+											onValuesServiceChange={setValuesServiceChange}
+											onEditingServiceSubmit={handleEditingSubmit}
 											onSuccess={success}
 											onError={error}
-											nameService={data.title}
-											priceService={data.price}
-											slotService={data.quantity}
 										/>
 									) : (
 										""

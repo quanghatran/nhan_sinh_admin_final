@@ -22,6 +22,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import customerApi from "../../../../api/customerApi";
 import ConfirmDialog from "../../../../components/ConfirmDialog";
+import formatCash from "../../../../components/FormatMoney";
 import SearchTerm from "../../../../components/Search";
 import AddingSlotVip from "../../components/AddingSlotVip";
 import DepositUserForm from "../../components/DepositUserForm";
@@ -183,7 +184,6 @@ export default function CustomPaginationActionsTable() {
 		const fetchGetListUsers = async () => {
 			try {
 				const response = await customerApi.getListUsers();
-				console.log(response.data);
 				setRows(response.data);
 			} catch (error) {
 				// console.log("failed to fetch product list: ", error);
@@ -481,7 +481,7 @@ export default function CustomPaginationActionsTable() {
 								<TableCell>
 									<Grid container alignItems='center'>
 										<Grid item style={{ paddingRight: "5px" }}>
-											{row.money}
+											{formatCash("" + row.money)} VNĐ
 										</Grid>
 										<Grid item>
 											<Tooltip title='Chỉnh sửa ngân lượng'>

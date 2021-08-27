@@ -5,6 +5,10 @@ const servicesApi = {
 		const url = "/api/services";
 		return axiosAdmin.get(url, params);
 	},
+	getInfoServiceById: (idService, params) => {
+		const url = `/api/services/${idService}`;
+		return axiosAdmin.get(url, params);
+	},
 	addService: (params) => {
 		const url = "/api/services";
 		return axiosAdmin.post(url, params);
