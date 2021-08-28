@@ -33,14 +33,14 @@ const useStyles = makeStyles((theme) => {
 			display: "flex",
 		},
 		drawer: {
-			[theme.breakpoints.up("sm")]: {
+			[theme.breakpoints.up("lg")]: {
 				width: drawerWidth,
 				flexShrink: 0,
 			},
 		},
 
 		appBar: {
-			[theme.breakpoints.up("sm")]: {
+			[theme.breakpoints.up("lg")]: {
 				width: `calc(100% - ${drawerWidth}px)`,
 				marginLeft: drawerWidth,
 			},
@@ -48,10 +48,11 @@ const useStyles = makeStyles((theme) => {
 
 		menuButton: {
 			marginRight: theme.spacing(2),
-			[theme.breakpoints.up("sm")]: {
+			[theme.breakpoints.up("lg")]: {
 				display: "none",
 			},
 		},
+
 		drawerPaper: {
 			width: drawerWidth,
 		},
@@ -61,12 +62,7 @@ const useStyles = makeStyles((theme) => {
 		title: {
 			padding: theme.spacing(2),
 		},
-		appBar: {
-			[theme.breakpoints.up("sm")]: {
-				width: `calc(100% - ${drawerWidth}px)`,
-				marginLeft: drawerWidth,
-			},
-		},
+
 		date: {
 			flexGrow: 1,
 		},
@@ -251,7 +247,7 @@ export default function Layout({ children }) {
 			</AppBar>
 
 			<nav className={classes.drawer} aria-label='mailbox folders'>
-				<Hidden smUp implementation='css'>
+				<Hidden lgUp implementation='css'>
 					<Drawer
 						// container={container}
 						variant='temporary'
@@ -267,7 +263,7 @@ export default function Layout({ children }) {
 						{drawer}
 					</Drawer>
 				</Hidden>
-				<Hidden xsDown implementation='css'>
+				<Hidden mdDown implementation='css'>
 					<Drawer
 						classes={{
 							paper: classes.drawerPaper,

@@ -184,6 +184,7 @@ export default function CustomPaginationActionsTable() {
 		const fetchGetListUsers = async () => {
 			try {
 				const response = await customerApi.getListUsers();
+				console.log(response.data);
 				setRows(response.data);
 			} catch (error) {
 				// console.log("failed to fetch product list: ", error);
@@ -391,14 +392,15 @@ export default function CustomPaginationActionsTable() {
 					<TableHead style={{ backgroundColor: "#bdc3c7" }}>
 						<TableRow>
 							<TableCell>ID </TableCell>
-							<TableCell>SĐT</TableCell>
-							<TableCell>Họ Tên</TableCell>
+							<TableCell>Phone</TableCell>
+							<TableCell>Status</TableCell>
+							<TableCell>Name</TableCell>
 							<TableCell>Email</TableCell>
 							<TableCell>Service Bought</TableCell>
 							<TableCell>Full Report</TableCell>
-							<TableCell>Tư Vấn TT</TableCell>
-							<TableCell>Vip Slot Left</TableCell>
-							<TableCell>Số Tiền</TableCell>
+							<TableCell>Coaching</TableCell>
+							<TableCell>Vip Search</TableCell>
+							<TableCell>Money</TableCell>
 							<TableCell>Delete</TableCell>
 						</TableRow>
 					</TableHead>
@@ -410,6 +412,11 @@ export default function CustomPaginationActionsTable() {
 							<TableRow key={row._id}>
 								<TableCell>{index + 1}</TableCell>
 								<TableCell>{row.phone}</TableCell>
+								<TableCell>
+									{row.isVerified === true
+										? "Đã xác thực tài khoản"
+										: "Chưa xác thực tài khoản"}
+								</TableCell>
 								<TableCell>{row.name}</TableCell>
 								<TableCell>{row.email}</TableCell>
 								<TableCell>
