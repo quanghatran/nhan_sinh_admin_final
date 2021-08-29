@@ -1,9 +1,27 @@
 import { Container, Typography } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import statisticApi from "../../../../api/statisticApi";
 import StaticSearchChart from "../../components/StaticSearchChart";
 import StatisticDeposit from "../../components/StatisticDeposit";
+import TreeNodeChild from "../../components/TreeNodeChild";
 
 const MainPage = () => {
+	const [listTree, setListTree] = useState([]);
+
+	useEffect(() => {
+		const fetchStatisticDeposit = () => {
+			statisticApi
+				.getTreeUsers()
+				.then((response) => {
+					setListTree(response.data);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		};
+		fetchStatisticDeposit();
+	}, []);
+
 	return (
 		<React.Fragment>
 			<Container>
@@ -14,11 +32,11 @@ const MainPage = () => {
 					Trang chủ admin Minh Triết Nhân Sinh
 				</Typography>
 
-				{/* <ServiceOverview /> */}
-
 				<StaticSearchChart />
 
 				<StatisticDeposit />
+
+				<TreeNodeChild listTree={listTree} />
 			</Container>
 		</React.Fragment>
 	);

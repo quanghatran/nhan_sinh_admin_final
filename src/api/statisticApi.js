@@ -17,6 +17,10 @@ const statisticApi = {
 		const url = "/api/admin/get-gap-truc-tiep-data-by-day";
 		return axiosAdmin.post(url, params);
 	},
+	getTreeUsers: (params) => {
+		const url = "/api/admin/get-tree";
+		return axiosAdmin.get(url, params);
+	},
 };
 
 export default statisticApi;
