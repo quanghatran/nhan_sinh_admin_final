@@ -226,7 +226,9 @@ const Coachers = () => {
 			// setIsRowsChanges(!isRowsChanges);
 
 			listCoacher.filter((item) => {
-				const nameFiltered = item.name.toLowerCase().includes(lowerCasedFilter);
+				const nameFiltered = item.phone
+					.toLowerCase()
+					.includes(lowerCasedFilter);
 				if (nameFiltered) {
 					arrayFiltered.push(item);
 				}

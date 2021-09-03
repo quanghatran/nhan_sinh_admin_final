@@ -195,7 +195,9 @@ export default function CustomPaginationActionsTable() {
 			// setIsRowsChanges(!isRowsChanges);
 
 			rows.filter((item) => {
-				const nameFiltered = item.name.toLowerCase().includes(lowerCasedFilter);
+				const nameFiltered = item.phoneNumber
+					.toLowerCase()
+					.includes(lowerCasedFilter);
 				if (nameFiltered) {
 					arrayFiltered.push(item);
 				}

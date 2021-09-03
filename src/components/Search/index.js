@@ -63,7 +63,7 @@ const SearchTerm = (props) => {
 			<Paper component='form' className={classes.root}>
 				<InputBase
 					className={classes.input}
-					placeholder='Search by name...'
+					placeholder='Search by phone number...'
 					value={searchTerm}
 					onChange={handleSearchTermChange}
 				/>

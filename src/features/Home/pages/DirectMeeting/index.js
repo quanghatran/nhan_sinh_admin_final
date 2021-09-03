@@ -267,7 +267,9 @@ const DirectMeeting = () => {
 			// setIsRowsChanges(!isRowsChanges);
 
 			listDirectMeet.filter((item) => {
-				const nameFiltered = item.name.toLowerCase().includes(lowerCasedFilter);
+				const nameFiltered = item.phoneNumber
+					.toLowerCase()
+					.includes(lowerCasedFilter);
 				if (nameFiltered) {
 					arrayFiltered.push(item);
 				}

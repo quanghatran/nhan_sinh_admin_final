@@ -87,7 +87,7 @@ const SignIn = () => {
 					<CssBaseline />
 					<div className={classes.paper}>
 						<Avatar className={classes.avatar} src={satsi_logo}></Avatar>
-						<Typography component='h1' variant='h5'>
+						<Typography component='h1' variant='h5' className='titleLogin'>
 							Minh Triết Nhân Sinh Admin
 						</Typography>
 						<form
